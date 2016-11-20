@@ -1,0 +1,19 @@
+name: ltk-cr
+version: 0.1.0
+
+authors:
+  - Tamás Szekeres <szektam2@gmail.com>
+
+description: |
+  Lightweight Windowing Toolkit for Crystal language.
+
+dependencies:
+  x11-cr:
+    github: TamasSzekeres/x11-cr
+    branch: master
+
+  cairo-cr:
+    github: TamasSzekeres/cairo-cr
+    branch: master
+
+license: MIT
