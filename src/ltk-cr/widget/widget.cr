@@ -15,13 +15,11 @@ module Ltk
     getter children : Array(Widget)
 
     def initialize(@parent = nil)
-      puts "Widget::initialize start"
       @geometry = Rect.new 0, 0, 100, 100
       @display = uninitialized X::PDisplay
       @screen = 0
       @children = Array(Widget).new
       create_window
-      puts "Widget::initialize end"
     end
 
     def finalize
@@ -29,7 +27,6 @@ module Ltk
     end
 
     protected def create_window
-      puts "Widget::create_window start"
       pwin = uninitialized X11::Window
       if @parent.is_a? Widget
         parent = @parent.as Widget
@@ -42,8 +39,6 @@ module Ltk
         @screen = X.default_screen @display
         pwin = X.root_window @display, @screen
       end
-
-      puts "Widget::create_window 1"
 
       @window = X.create_simple_window(
         @display, pwin,
@@ -118,17 +113,17 @@ module Ltk
           Point.new(event.button.x, event.button.y),
           Point.new(event.button.x_root, event.button.y_root)))
       when MotionNotify
-        puts "Widget MotionNotify"
+        #puts "Widget MotionNotify"
       when EnterNotify
-        puts "widget::enter win="
+        #puts "widget::enter win="
         enter_event
       when LeaveNotify
-        puts "widget::leave win="
+        #puts "widget::leave win="
         leave_event
       when KeyPress
-        puts "KeyPress Event"
+        #puts "KeyPress Event"
       when KeyRelease
-        puts "KeyRelease Event"
+        #puts "KeyRelease Event"
       when Expose
         paint_event
       else

@@ -1,7 +1,8 @@
+require "./gradient"
 require "./point_f"
 
 module Ltk
-  class LinearGradient
+  class LinearGradient < Gradient
     property start : PointF
     property end : PointF
 
@@ -10,6 +11,7 @@ module Ltk
     end
 
     def initialize(x0, y0, x1, y1)
+      super
       @start = PointF.new x0, y0
       @end = PointF.new x1, y1
     end

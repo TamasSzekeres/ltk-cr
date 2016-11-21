@@ -27,7 +27,7 @@ module Ltk
     end
 
     def self.run(args : Array(String))
-      puts "running..."
+      #puts "running..."
       return 1 if @@display.is_a? Nil
 
       event = uninitialized X::Event
@@ -35,15 +35,15 @@ module Ltk
         if X.pending @@display
           X.next_event @@display, pointerof(event)
 
-          #writeln("app event=", event.type, ", window=", event.xany.window)
+          #puts "app event=#{event.type} window=#{event.any.window}"
 
           case event.type
           when ClientMessage
             break if event.client.data.ul[0] == @@wm_delete_window
           else
-            el = @@event_listeners[event.any.window]
+            el = @@event_listeners.fetch event.any.window, nil
             if el.is_a? EventListener
-              el.event(event)
+              (el.as EventListener).event(event)
             end
           end
         end

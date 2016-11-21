@@ -8,18 +8,17 @@ module Ltk
 
   class MainWindow < Widget
     def initialize
-      puts "MainWindow::initialize start"
       super
     end
 
     def title
-      #c_str = uninitialized PChar
-      #X.fetch_name(@display, @window, pointerof(c_str))
-      "title"
+      c_str = uninitialized PChar
+      X.fetch_name @display, @window, pointerof(c_str)
+      String.new c_str
     end
 
     def title=(t : String)
-      #X.store_name(@display, @window, t)
+      X.store_name @display, @window, t
     end
   end
 end
