@@ -4,19 +4,31 @@ require "./ltk-cr/widget/*"
 require "./ltk-cr/*"
 
 module Ltk
-  puts "Start Ltk Sample - Cr"
+  class Main
+    def btn_click
+      puts "btn clicked!"
+      exit 0
+    end
 
-  args = [] of String
-  #Application.init args
+    def main
+      puts "Start Ltk Sample - Cr"
 
-  main_win = MainWindow.new
-  main_win.title = "LTK-Win"
-  main_win.geometry = Rect.new 10, 10, 800, 600
+      args = [] of String
+      #Application.init args
 
-  puts "mainWin.title=#{main_win.title}"
+      main_win = MainWindow.new
+      main_win.title = "LTK-Win"
+      main_win.geometry = Rect.new 10, 10, 800, 600
 
-  btn = PushButton.new "Kilépés", main_win
-  btn.geometry = Rect.new 20, 20, 150, 23
+      puts "mainWin.title=#{main_win.title}"
 
-  Application.run args
+      btn = PushButton.new "Kilépés", main_win
+      btn.geometry = Rect.new 20, 20, 150, 23
+      btn.on_click = ->btn_click
+
+      Application.run args
+    end
+
+    (Main.new).main
+  end
 end

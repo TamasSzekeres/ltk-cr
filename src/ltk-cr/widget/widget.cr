@@ -7,12 +7,16 @@ require "../event/*"
 module Ltk
   include X11
 
+  alias ClickEvent = Proc(Void | Nil)
+
   class Widget < EventListener
     getter parent : Widget?
     getter geometry : Rect
     getter display : X::PDisplay
     getter screen : Int32
     getter children : Array(Widget)
+
+    property on_click : ClickEvent?
 
     def initialize(@parent = nil)
       @geometry = Rect.new 0, 0, 100, 100
@@ -95,7 +99,7 @@ module Ltk
         else
           EventButton::None
         end
-        mouse_down_event(MouseEvent.new(button,
+        self.mouse_down_event(MouseEvent.new(button,
           Point.new(event.button.x, event.button.y),
           Point.new(event.button.x_root, event.button.y_root)))
       when ButtonRelease
@@ -109,23 +113,23 @@ module Ltk
         else
           EventButton::None
         end
-        mouse_up_event(MouseEvent.new(button,
+        self.mouse_up_event(MouseEvent.new(button,
           Point.new(event.button.x, event.button.y),
           Point.new(event.button.x_root, event.button.y_root)))
       when MotionNotify
         #puts "Widget MotionNotify"
       when EnterNotify
         #puts "widget::enter win="
-        enter_event
+        self.enter_event
       when LeaveNotify
         #puts "widget::leave win="
-        leave_event
+        self.leave_event
       when KeyPress
         #puts "KeyPress Event"
       when KeyRelease
         #puts "KeyRelease Event"
       when Expose
-        paint_event
+        self.paint_event
       else
       end
 
@@ -133,10 +137,13 @@ module Ltk
     end
 
     def repaint
-      paint_event
+      self.paint_event
     end
 
     protected def click_event
+      if @on_click.is_a? ClickEvent
+        (@on_click.as ClickEvent).call
+      end
     end
 
     protected def enter_event
