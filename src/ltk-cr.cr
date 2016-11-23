@@ -7,7 +7,6 @@ module Ltk
   class Main
     def btn_click
       puts "btn clicked!"
-      exit 0
     end
 
     def main
@@ -23,6 +22,7 @@ module Ltk
       puts "mainWin.title=#{main_win.title}"
 
       btn = PushButton.new "Kilépés", main_win
+      btn.object_name = "btn1"
       btn.geometry = Rect.new 20, 20, 150, 23
       btn.on_click = ->btn_click
 

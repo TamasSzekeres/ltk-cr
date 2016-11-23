@@ -58,5 +58,9 @@ module Ltk
       p.draw_push_button self, @hover, @down
       p.finalize
     end
+
+    def text=(@text)
+      self.repaint
+    end
   end
 end

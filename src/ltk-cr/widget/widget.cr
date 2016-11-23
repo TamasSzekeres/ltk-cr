@@ -3,13 +3,15 @@ require "./x11-cr/x11/Xlib"
 
 require "../base/rect"
 require "../event/*"
+require "../layout/layout"
+require "../layout/layout_item"
 
 module Ltk
   include X11
 
   alias ClickEvent = Proc(Void | Nil)
 
-  class Widget < EventListener
+  class Widget < LayoutItem
     getter parent : Widget?
     getter geometry : Rect
     getter display : X::PDisplay
