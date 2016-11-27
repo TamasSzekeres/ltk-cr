@@ -1,5 +1,5 @@
 require "./gradient"
-require "./point_f"
+require "./point"
 
 module Ltk
   class LinearGradient < Gradient
