@@ -1,5 +1,4 @@
-require "./x11-cr/x11/X"
-require "./x11-cr/x11/Xlib"
+require "x11"
 
 require "../event/mouse_event"
 require "./widget"
@@ -44,7 +43,6 @@ module Ltk
 
     protected def mouse_up_event(event : MouseEvent)
       super
-
       @down = false
       repaint
 

@@ -1,5 +1,5 @@
 require "../spec_helper"
-require "../../src/ltk-cr/base/point"
+require "../../src/ltk/base/point"
 
 include Ltk
 

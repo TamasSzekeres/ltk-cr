@@ -1,4 +1,4 @@
-name: ltk-cr
+name: ltk
 version: 0.1.0
 
 authors:
@@ -8,12 +8,10 @@ description: |
   Lightweight Windowing Toolkit for Crystal language.
 
 dependencies:
-  x11-cr:
-    github: TamasSzekeres/x11-cr
-    branch: master
-
-  cairo-cr:
+  cairo:
     github: TamasSzekeres/cairo-cr
     branch: master
+
+crystal: 0.24.1
 
 license: MIT

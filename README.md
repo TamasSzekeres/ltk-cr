@@ -9,8 +9,9 @@ Add this to your application's `shard.yml`:
 
 ```yaml
 dependencies:
-  ltk-cr:
+  ltk:
     github: TamasSzekeres/ltk-cr
+    branch: master
 ```
 
 Then run in terminal:
@@ -22,10 +23,10 @@ crystal deps
 
 
 ```crystal
-require "./ltk-cr/*"
+require "ltk"
 
 module YourModule
-  include Ltk # For simpler use
+  include Ltk
 end
 ```
 

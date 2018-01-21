@@ -1,5 +1,4 @@
-require "./x11-cr/x11/X"
-require "./x11-cr/x11/Xlib"
+require "x11"
 
 require "../event/event_listener"
 
@@ -9,31 +8,27 @@ module Ltk
   class Application
     WM_DELETE_WINDOW_STR = "WM_DELETE_WINDOW"
 
-    @@display = uninitialized X::PDisplay
-    @@wm_delete_window : X11::Atom = 0_u64
-    @@event_listeners = Hash(X11::Window, EventListener).new
+    @@display = Display.new
+    @@wm_delete_window = 0_u64
+    @@wm_delete_window = @@display.intern_atom(WM_DELETE_WINDOW_STR, false)
+    @@event_listeners = Hash(X11::C::Window, EventListener).new
     @@widgets = Array(Widget).new
 
-    init
-
-    # init
-    private def self.init
-      @@display = X.open_display nil
-      @@wm_delete_window = X.intern_atom(@@display, WM_DELETE_WINDOW_STR, 0)
-    end
-
     private def self.finalize
-      X.close_display @@display
+      @@display.close
     end
 
     def self.run(args : Array(String))
       #puts "running..."
       return 1 if @@display.is_a? Nil
 
-      event = uninitialized X::Event
+      event = uninitialized X11::C::X::Event
       while true
-        if X.pending @@display
-          X.next_event @@display, pointerof(event)
+        if @@display.pending
+          X11::C::X.next_event @@display.to_unsafe, pointerof(event)
+
+          #p event.class
+          puts "app event=#{event.type} window=#{event.any.window}"
 
           #puts "app event=#{event.type} window=#{event.any.window}"
 
@@ -43,9 +38,23 @@ module Ltk
           else
             el = @@event_listeners.fetch event.any.window, nil
             if el.is_a? EventListener
-              (el.as EventListener).event(event)
+              (el.as EventListener).event(X11::Event.from_xevent(event))
             end
           end
+
+          # case event
+          # when ClientMessageEvent
+          #   break if event.long_data[0] == @@wm_delete_window
+          # else
+          #   if event.is_a?(WindowEvent)
+          #     win = event.as(WindowEvent).to_x.window
+          #     puts "event is WindowEvent #{win} #{event.class}"
+          #     el = @@event_listeners.fetch event.as(WindowEvent).window, nil
+          #     if el.is_a? EventListener
+          #       (el.as EventListener).event(event)
+          #     end
+          #   end
+          # end
         end
       end
 

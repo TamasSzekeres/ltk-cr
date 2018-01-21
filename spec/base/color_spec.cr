@@ -1,5 +1,5 @@
 require "../spec_helper"
-require "../../src/ltk-cr/base/color"
+require "../../src/ltk/base/color"
 
 include Ltk
 
