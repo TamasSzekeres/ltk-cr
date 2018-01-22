@@ -48,7 +48,7 @@ module Ltk
 
       r = geometry
       r.x = 0; r.y = 0
-      self.click_event if r.contains? event.global_pos
+      self.click_event if r.contains? event.pos
     end
 
     protected def paint_event

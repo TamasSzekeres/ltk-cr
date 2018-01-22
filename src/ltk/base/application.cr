@@ -19,42 +19,23 @@ module Ltk
     end
 
     def self.run(args : Array(String))
-      #puts "running..."
       return 1 if @@display.is_a? Nil
 
-      event = uninitialized X11::C::X::Event
       while true
         if @@display.pending
-          X11::C::X.next_event @@display.to_unsafe, pointerof(event)
-
-          #p event.class
-          puts "app event=#{event.type} window=#{event.any.window}"
-
-          #puts "app event=#{event.type} window=#{event.any.window}"
-
-          case event.type
-          when ClientMessage
-            break if event.client.data.ul[0] == @@wm_delete_window
+          event = @@display.next_event
+          case event
+          when ClientMessageEvent
+            break if event.long_data[0] == @@wm_delete_window
           else
-            el = @@event_listeners.fetch event.any.window, nil
-            if el.is_a? EventListener
-              (el.as EventListener).event(X11::Event.from_xevent(event))
+            if event.is_a?(WindowEvent)
+              win = event.as(WindowEvent).window
+              el = @@event_listeners.fetch event.as(WindowEvent).window, nil
+              if el.is_a? EventListener
+                (el.as EventListener).event(event)
+              end
             end
           end
-
-          # case event
-          # when ClientMessageEvent
-          #   break if event.long_data[0] == @@wm_delete_window
-          # else
-          #   if event.is_a?(WindowEvent)
-          #     win = event.as(WindowEvent).to_x.window
-          #     puts "event is WindowEvent #{win} #{event.class}"
-          #     el = @@event_listeners.fetch event.as(WindowEvent).window, nil
-          #     if el.is_a? EventListener
-          #       (el.as EventListener).event(event)
-          #     end
-          #   end
-          # end
         end
       end
 

@@ -51,15 +51,15 @@ module Ltk
       # )
       @window = @display.create_simple_window(
         pwin,
-        0, 0, 400_u32, 300_u32, 0_u32,
+        @geometry.x, @geometry.y,
+        400_u32, 300_u32, 0_u32,
         @display.black_pixel(@screen.screen_number),
         0x4e4e4e_u64
       )
       puts "window created: #{pwin} -> #{@window} (#{self.class})"
       @display.select_input(
         @window,
-        ButtonPressMask |
-        # ButtonReleaseMask | ButtonMotionMask |
+        ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
         ExposureMask |
         EnterWindowMask | LeaveWindowMask |
         KeyPressMask | KeyReleaseMask)
@@ -90,8 +90,6 @@ module Ltk
     end
 
     def event(event : X11::Event) : Bool
-      # puts "Widget::event #{event.class}"
-      # puts "self.class=#{self.class} self.window=#{@window}"
       if event.is_a?(WindowEvent) && event.as(WindowEvent).window != @window
         return false
       end
@@ -129,7 +127,8 @@ module Ltk
           self.leave_event
         end
       when KeyEvent
-        puts "KeyEvent"
+        begin
+        end
       when ExposeEvent
         self.paint_event
       else
