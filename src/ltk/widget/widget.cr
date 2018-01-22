@@ -42,21 +42,13 @@ module Ltk
         pwin = @display.root_window @screen.screen_number
       end
 
-      # @window = @display.create_simple_window(
-      #   pwin,
-      #   @geometry.x, @geometry.y,
-      #   @geometry.width, @geometry.height, 0,
-      #   X.black_pixel(@display, @screen.screen_number),
-      #   0x4e4e4e
-      # )
       @window = @display.create_simple_window(
         pwin,
         @geometry.x, @geometry.y,
-        400_u32, 300_u32, 0_u32,
+        @geometry.width.to_u32, @geometry.height.to_u32, 0_u32,
         @display.black_pixel(@screen.screen_number),
         0x4e4e4e_u64
       )
-      puts "window created: #{pwin} -> #{@window} (#{self.class})"
       @display.select_input(
         @window,
         ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
@@ -83,10 +75,10 @@ module Ltk
       end
       Application.remove_event_listener self
       @display.destroy_window @window
-      # if (@display != Application.display) ||
-      #   (!(@parent.is_a? Nil) && (@display != @parent.as(Widget).display))
-      #   @display.close
-      # end
+      if (@display != Application.display) ||
+        (!(@parent.is_a? Nil) && (@display != @parent.as(Widget).display))
+        @display.close
+      end
     end
 
     def event(event : X11::Event) : Bool
@@ -96,7 +88,6 @@ module Ltk
 
       case event
       when ButtonEvent
-        # puts "event is ButtonEvent"
         button_event = event.as(ButtonEvent)
         button = case button_event.button
         when 1
@@ -190,10 +181,12 @@ module Ltk
 
     def set_geometry(x, y, width, height)
       self.geometry = Rect.new x, y, width, height
+      self
     end
 
     def add_child(w)
       @children << w
+      self
     end
   end
 end

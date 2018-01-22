@@ -22,7 +22,7 @@ module Ltk
       return 1 if @@display.is_a? Nil
 
       while true
-        if @@display.pending
+        if @@display.events_queued(X11::C::X::QueuedAfterFlush) > 0
           event = @@display.next_event
           case event
           when ClientMessageEvent
@@ -36,10 +36,13 @@ module Ltk
               end
             end
           end
+        else
+          Fiber.yield
         end
       end
 
       finalize
+      GC.collect
       0
     end
 
