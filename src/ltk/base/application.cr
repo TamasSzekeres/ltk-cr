@@ -5,7 +5,7 @@ require "../event/event_listener"
 module Ltk
   include X11
 
-  class Application
+  abstract class Application
     WM_DELETE_WINDOW_STR = "WM_DELETE_WINDOW"
 
     @@display = Display.new
@@ -14,6 +14,8 @@ module Ltk
     @@event_listeners = Hash(X11::C::Window, EventListener).new
     @@widgets = Array(Widget).new
 
+    @running = false
+
     private def self.finalize
       @@display.close
     end
@@ -21,12 +23,13 @@ module Ltk
     def self.run(args : Array(String))
       return 1 if @@display.is_a? Nil
 
-      while true
+      @@running = true
+      while @@running
         if @@display.events_queued(X11::C::X::QueuedAfterFlush) > 0
           event = @@display.next_event
           case event
           when ClientMessageEvent
-            break if event.long_data[0] == @@wm_delete_window
+            close if event.long_data[0] == @@wm_delete_window
           else
             if event.is_a?(WindowEvent)
               win = event.as(WindowEvent).window
@@ -44,6 +47,10 @@ module Ltk
       finalize
       GC.collect
       0
+    end
+
+    def self.close
+      @@running = false
     end
 
     def self.add_event_listener(el : EventListener)
@@ -68,6 +75,10 @@ module Ltk
 
     def self.wm_delete_window=(value)
       @@wm_delete_window = value
+    end
+
+    def self.is_running?
+      @@running
     end
   end
 end
