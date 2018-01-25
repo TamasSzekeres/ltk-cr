@@ -4,7 +4,7 @@ module Button
   include Ltk
 
   class Example
-    # Haindling of clicking on the close_button.
+    # Handling of clicking on the close_button.
     def close_button_click
       puts "close_button clicked!"
       Application.close
