@@ -1,5 +1,7 @@
 module Ltk
   struct Margins
+    ZERO = Margins.new 0, 0, 0, 0
+
     property left : Int32
     property top : Int32
     property right : Int32

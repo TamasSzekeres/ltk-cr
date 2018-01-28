@@ -2,6 +2,9 @@ require "../enums/aspect_ratio_mode"
 
 module Ltk
   struct Size
+    ZERO = Size.new(0, 0)
+    MAX = Size.new(Int32.MAX, Int32.MAX)
+
     property width : Int32
     property height : Int32
 
@@ -14,49 +17,49 @@ module Ltk
     end
 
     @[AlwaysInline]
-    def null?
+    def null? : Bool
       @width == 0 && @height == 0
     end
 
     @[AlwaysInline]
-    def empty?
+    def empty? : Bool
       @width < 1 || @height < 1
     end
 
     @[AlwaysInline]
-    def valid?
+    def valid? : Bool
       @width >= 0 && @height >= 0
     end
 
     @[AlwaysInline]
-    def transpose
+    def transpose : Size
       @width, @height = @height, @width
       self
     end
 
     @[AlwaysInline]
-    def transposed
+    def transposed : Size
       Size.new @height, @width
     end
 
     @[AlwaysInline]
-    def scale(w, h, mode : AspectRatioMode)
-      self.scale Size.new(w, h), mode
+    def scale(w : Int, h : Int, mode : AspectRatioMode) : Size
+      scale Size.new(w, h), mode
     end
 
     @[AlwaysInline]
-    def scale(s : Size, mode : AspectRatioMode)
-      s = self.scaled s, mode
+    def scale(s : Size, mode : AspectRatioMode) : Size
+      s = scaled s, mode
       @width, @height = s.width, s.height
       self
     end
 
     @[AlwaysInline]
-    def scaled(w, h, mode : AspectRatioMode)
-      self.scaled Size.new(w, h)
+    def scaled(w : Int, h : Int, mode : AspectRatioMode) : Size
+      self.scaled Size.new(w, h), mode
     end
 
-    def scaled(s : Size, mode : AspectRatioMode)
+    def scaled(s : Size, mode : AspectRatioMode) :  Size
       if mode == AspectRatioMode::Ignore || @width == 0 || @height == 0
         return s
       end
@@ -78,158 +81,44 @@ module Ltk
     end
 
     @[AlwaysInline]
-    def expanded_to(other : Size)
+    def expanded_to(other : Size) : Size
       Size.new(
         Math.max(@width, other.width),
         Math.max(@height, other.height))
     end
 
     @[AlwaysInline]
-    def bounded_to(other : Size)
+    def bounded_to(other : Size) : Size
       Size.new(
         Math.min(@width, other.width),
         Math.min(@height, other.height))
     end
 
     @[AlwaysInline]
-    def +(s : Size)
+    def +(s : Size) : Size
       Size.new @width + s.width, @height + s.height
     end
 
     @[AlwaysInline]
-    def -(s : Size)
+    def -(s : Size) : Size
       Size.new @width - s.width, @height - s.height
     end
 
     @[AlwaysInline]
-    def *(c : Float64)
-      Size.new @width * c, @height * c
+    def *(c : Float) : Size
+      Size.new (@width * c).round.to_i, (@height * c).round.to_i
     end
 
     @[AlwaysInline]
-    def /(s : Float64)
-      Size.new @width / c, @height / c
+    def /(s : Float) : Size
+      Size.new (@width / c).round.to_i, (@height / c).round.to_i
     end
   end
 
-  struct SizeF
-    property width : Float64
-    property height : Float64
-
-    def initialize
-      @width = -1.0
-      @height = -1.0
-    end
-
-    def initialize(size : Size)
-      @width = size.width
-      @height = size.height
-    end
-
-    def initialize(@width, @height)
-    end
-
+  struct Float
     @[AlwaysInline]
-    def null?
-      @width == 0.0 && @height == 0.0
-    end
-
-    @[AlwaysInline]
-    def empty?
-      @width <= 0.0 || @height <= 0.0
-    end
-
-    @[AlwaysInline]
-    def valid?
-      @width >= 0.0 && @height >= 0.0
-    end
-
-    @[AlwaysInline]
-    def transpose
-      @width, @height = @height, @width
-      self
-    end
-
-    @[AlwaysInline]
-    def transposed
-      SizeF.new @height, @width
-    end
-
-    @[AlwaysInline]
-    def scale(w, h, mode : AspectRatioMode)
-      self.scale SizeF.new(w, h), mode
-    end
-
-    @[AlwaysInline]
-    def scale(s : SizeF, mode : AspectRatioMode)
-      s = self.scaled s, mode
-      @width, @height = s.width, s.height
-      self
-    end
-
-    @[AlwaysInline]
-    def scaled(w, h, mode : AspectRatioMode)
-      self.scaled SizeF.new(q, h), mode
-    end
-
-    def scaled(s : SizeF, mode : AspectRatioMode)
-      if mode == AspectRatioMode::Ignore || @width == 0.0 || @height == 0.0
-        return s
-      end
-
-      use_height = false
-      rw = s.height * @width / @height
-
-      if mode == AspectRatioMode::Keep
-          use_height = rw <= s.width
-      else # mode == AspectRatioMode::KeepByExpanding
-        use_height = rw >= s.width
-      end
-
-      if use_height
-        SizeF.new rw, s.height
-      else
-        SizeF.new s.width, s.width * @height / @width
-      end
-    end
-
-    @[AlwaysInline]
-    def expanded_to(other : SizeF)
-      SizeF.new(
-        Math.max(@width, other.width),
-        Math.max(@height, other.height))
-    end
-
-    @[AlwaysInline]
-    def bounded_to(other : SizeF)
-      SizeF.new(
-        Math.min(@width, other.width),
-        Math.min(@height, other.height))
-    end
-
-    @[AlwaysInline]
-    def +(s : SizeF)
-      SizeF.new @width + s.width, @height + s.height
-    end
-
-    @[AlwaysInline]
-    def -(s : SizeF)
-      SizeF.new @width - s.width, @height - s.height
-    end
-
-    @[AlwaysInline]
-    def *(c : Float64)
-      SizeF.new @width * c, @height * c
-    end
-
-    @[AlwaysInline]
-    def /(s : Float64)
-      SizeF.new @width / c, @height / c
-    end
-
-    @[AlwaysInline]
-    def to_size
-      Size.new @width.round, @height.round
+    def *(s : Size) : Size
+      Size.new (s.width * self).round.to_i, (s.height * self).round.to_i
     end
   end
 end

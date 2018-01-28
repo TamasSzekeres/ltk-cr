@@ -1,0 +1,24 @@
+name: layout
+version: 0.1.0
+
+authors:
+  - Tamás Szekeres <szektam2@gmail.com>
+
+description: Simple example Window with using layout.
+
+dependencies:
+  x11:
+    path: ../../../x11-cr/.
+  cairo:
+    path: ../../../cairo-cr/.
+
+  ltk:
+    path: ../../.
+
+targets:
+  button:
+    main: src/layout.cr
+
+crystal: 0.24.1
+
+license: MIT
