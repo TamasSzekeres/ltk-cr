@@ -1,0 +1,24 @@
+name: line_edit
+version: 0.1.0
+
+authors:
+  - Tamás Szekeres <szektam2@gmail.com>
+
+description: Simple example Window with a LineEdit.
+
+dependencies:
+  x11:
+    path: ../../../x11-cr/.
+  cairo:
+    path: ../../../cairo-cr/.
+
+  ltk:
+    path: ../../.
+
+targets:
+  button:
+    main: src/line_edit.cr
+
+crystal: 0.24.1
+
+license: MIT

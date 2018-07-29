@@ -1,21 +1,11 @@
 require "x11"
 
-require "../event/mouse_event"
 require "./widget"
 
 module Ltk
-  class PushButton < Widget
-    getter text : String
-
-    @hover = false
-    @down = false
+  class LineEdit < Widget
 
     def initialize(parent = nil)
-      super parent
-      @text = ""
-    end
-
-    def initialize(@text, parent = nil)
       super parent
     end
 
@@ -25,25 +15,21 @@ module Ltk
 
     protected def enter_event
       super
-      @hover = true
       repaint
     end
 
     protected def leave_event
       super
-      @hover = false
       repaint
     end
 
     protected def mouse_down_event(event : MouseEvent)
       super
-      @down = true
       repaint
     end
 
     protected def mouse_up_event(event : MouseEvent)
       super
-      @down = false
       repaint
 
       r = geometry
@@ -53,18 +39,12 @@ module Ltk
 
     protected def paint_event
       p = Painter.new self
-      p.draw_push_button self, @hover, @down
+      p.draw_line_edit self
       p.finalize
     end
 
     def text=(@text)
       self.repaint
-    end
-
-    def preferred_size : Size
-      Size.new(
-        Math.max(minimum_width, @text.size * 8 + 10),
-        Math.max(minimum_width, 23))
     end
   end
 end

@@ -12,6 +12,8 @@ module Ltk
   class Widget < EventListener
     getter parent : Widget?
     getter geometry : Rect
+    getter minimum_size : Size
+    getter maximum_size : Size
     getter content_margins : Margins = Margins::ZERO
     getter display : Display
     getter screen : Screen
@@ -22,6 +24,9 @@ module Ltk
 
     def initialize(@parent = nil)
       @geometry = Rect.new 0, 0, 100, 100
+      @minimum_size = Size::ZERO
+      @maximum_size = Size::MAX
+
       @children = Array(Widget).new
       if @parent.is_a? Widget
         @display = @parent.as(Widget).display
@@ -210,20 +215,50 @@ module Ltk
                @geometry.height - @content_margins.top - @content_margins.bottom)
     end
 
+    def preferred_width : Int32
+      preferred_size.width
+    end
+
+    def preferred_height : Int32
+      preferred_size.height
+    end
+
+    def preferred_size : Size
+      Size.new(Math.min(0, minimum_width), Math.min(0, minimum_height))
+    end
+
+    @[AlwaysInline]
+    def minimum_width : Int32
+      @minimum_size.width
+    end
+
+    @[AlwaysInline]
+    def minimum_height : Int32
+      @minimum_size.height
+    end
+
+    def minimum_size=(s : Size)
+      @minimum_size = s
+      # invalidate_geometry
+    end
+
+    @[AlwaysInline]
+    def maximum_width : Int32
+      @maximum_size.width
+    end
+
+    @[AlwaysInline]
+    def maximum_height : Int32
+      @maximum_size.height
+    end
+
+    def maximum_size=(s : Size)
+      @maximum_size = s
+      # invalidate_geometry
+    end
+
     def layout=(layout : Layout?)
       @layout = layout
-    end
-
-    def size_hint : Size
-      Size.new -1, -1
-    end
-
-    def minimum_size : Size
-      Size.ZERO
-    end
-
-    def maximum_size : Size
-      Size.MAX
     end
 
     def add_child(w)

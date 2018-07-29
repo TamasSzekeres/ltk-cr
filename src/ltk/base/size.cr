@@ -3,7 +3,7 @@ require "../enums/aspect_ratio_mode"
 module Ltk
   struct Size
     ZERO = Size.new(0, 0)
-    MAX = Size.new(Int32.MAX, Int32.MAX)
+    MAX = Size.new(Int32::MAX, Int32::MAX)
 
     property width : Int32
     property height : Int32

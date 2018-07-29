@@ -132,6 +132,30 @@ module Ltk
       @ctx.show_text text
     end
 
+    def draw_line_edit(line_edit : LineEdit)
+      w = line_edit.width
+      h = line_edit.height
+
+      #@ctx.scale 3.0_f64, 3.0_f64
+
+      pattern = Pattern.create_linear 0.0_f64, 0.0_f64, 0.0_f64, h.to_f
+      pattern.add_color_stop 0.0_f64, 46.0_f64 / 255.0_f64, 46.0_f64 / 255.0_f64, 46.0_f64 / 255.0_f64
+      pattern.add_color_stop 1.0_f64, 60.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64
+      @ctx.source = pattern
+      fill_round_rect 0, 0, w, h, 3
+
+      w -= 2; h -= 2
+      pattern = Pattern.create_linear 0.0_f64, 0.0_f64, 0.0_f64, h.to_f
+      pattern.add_color_stop 0.0_f64, 50.0_f64 / 255.0_f64, 50.0_f64 / 255.0_f64, 50.0_f64 / 255.0_f64
+      pattern.add_color_stop 1.0_f64, 53.0_f64 / 255.0_f64, 53.0_f64 / 255.0_f64, 53.0_f64 / 255.0_f64
+      @ctx.source = pattern
+      fill_round_rect 1, 1, w, h, 3
+
+      w -= 2; h -= 2
+      @ctx.set_source_rgb 56.0_f64 / 255.0_f64, 56.0_f64 / 255.0_f64, 56.0_f64 / 255.0_f64
+      fill_round_rect 2, 2, w, h, 3
+    end
+
     private def apply_brush
       # unless @pattern.is_a? Nil
       #   Cairo.pattern_destroy @pattern
