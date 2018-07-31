@@ -1,5 +1,6 @@
 require "x11"
 
+require "../base/margins"
 require "../base/rect"
 require "../event/*"
 require "../layout/layout"
@@ -11,14 +12,14 @@ module Ltk
 
   class Widget < EventListener
     getter parent : Widget?
+    getter layout : Layout? = nil
     getter geometry : Rect
     getter minimum_size : Size
     getter maximum_size : Size
-    getter content_margins : Margins = Margins::ZERO
+    getter margins : Margins = Margins::ZERO
     getter display : Display
     getter screen : Screen
     getter children : Array(Widget)
-    getter layout : Layout? = nil
 
     property on_click : ClickEvent?
 
@@ -201,8 +202,8 @@ module Ltk
     end
 
     def margins=(margins : Margins)
-      if @content_margins != margins
-        @content_margins = margins
+      if @margins != margins
+        @margins = margins
         if @layout.is_a?(Layout)
           @layout.as(Layout).geometry = content_rect
         end
@@ -210,9 +211,9 @@ module Ltk
     end
 
     def content_rect : Rect
-      Rect.new(@content_margins.left, @content_margins.top,
-               @geometry.width - @content_margins.left - @content_margins.right,
-               @geometry.height - @content_margins.top - @content_margins.bottom)
+      Rect.new(@margins.left, @margins.top,
+               @geometry.width - @margins.left - @margins.right,
+               @geometry.height - @margins.top - @margins.bottom)
     end
 
     def preferred_width : Int32

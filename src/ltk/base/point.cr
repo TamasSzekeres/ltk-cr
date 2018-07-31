@@ -27,17 +27,17 @@ module Ltk
     end
 
     @[AlwaysInline]
-    def *(factor)
+    def *(factor : Int)
       Point.new @x * factor, @y * factor
     end
 
     @[AlwaysInline]
-    def *(factor : Float)
+    def *(factor : Float32 | Float64)
       Point.new (@x * factor).round.to_i, (@y * factor).round.to_i
     end
 
     @[AlwaysInline]
-    def /(c : Float)
+    def /(c : Float32 | Float64)
       Point.new (@x / c).round.to_i, (@y / c).round.to_i
     end
   end

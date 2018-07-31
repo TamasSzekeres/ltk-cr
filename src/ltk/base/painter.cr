@@ -46,8 +46,8 @@ module Ltk
 
     def fill_rectangle(x : Int32, y : Int32, w : Int32, h : Int32)
       #@ctx.set_source_rgb 0.8_f64, 0.8_f64, 0.8_f64
-      # @ctx.rectangle x, y, w, h
-      # @ctx.fill
+      @ctx.rectangle x.to_f, y.to_f, w.to_f, h.to_f
+      @ctx.fill
     end
 
     def fill_round_rect(x : Int32, y : Int32, w : Int32, h : Int32, r : Int32)
