@@ -11,7 +11,6 @@ describe Ltk do
       it "properly calculates width for one item" do
         item = BoxLayoutItemData.new(Size.new(100, 0), Size.new(50, 0), Size.new(150, 0), 0, Alignment::Center)
         LayoutMath.calculateWidths([item], 100).should eq([100])
-        true.should eq(true)
       end
     end
   end
