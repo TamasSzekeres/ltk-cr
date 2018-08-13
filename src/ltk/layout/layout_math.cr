@@ -16,20 +16,32 @@ module Ltk
         sum_stretch += item.stretch
       end
 
+      width_remaining = layout_width
       items.each_with_index do |item, index|
-        widths[index] = layout_width * item.stretch / sum_stretch
+        if item.stretch == 0
+          widths[index] = Math.min(item.preferred_width, width_remaining)
+          width_remaining -= widths[index]
+        end
+      end
+
+      if sum_stretch > 0
+        items.each_with_index do |item, index|
+          if item.stretch > 0
+            widths[index] = width_remaining * item.stretch  / sum_stretch
+          end
+        end
       end
 
       widths
     end
 
     def calculateWidth(item : BoxLayoutItemData, layout_width : Int32) : Int32
-      if item.preferred_width == layout_width
-        layout_width
-      elsif item.preferred_width < layout_width
-        item.maximum_width < layout_width ? item.maximum_width : layout_width
+      if layout_width <= item.minimum_width
+        item.minimum_width
+      elsif layout_width <= item.preferred_width
+        item.preferred_width
       else
-        0
+        Math.min(layout_width, item.maximum_width)
       end
     end
   end
