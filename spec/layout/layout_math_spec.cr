@@ -17,10 +17,26 @@ describe Ltk do
         LayoutMath.calculateWidths([item], 200).should eq([150])
       end
 
-      it "properly calculates width for two items width 0 stretch factors" do
+      it "properly calculates widths for two items with 0 stretch factors" do
         item1 = BoxLayoutItemData.new(Size.new(100, 0), Size.new(50, 0), Size.new(150, 0), 0, Alignment::Center)
         item2 = BoxLayoutItemData.new(Size.new(100, 0), Size.new(50, 0), Size.new(150, 0), 0, Alignment::Center)
         LayoutMath.calculateWidths([item1, item2], 200).should eq([100, 100])
+      end
+
+      it "properly calculates widths for 4 items with 0,2,3,0 stretch factors" do
+        item1 = BoxLayoutItemData.new(Size.new(200, 0), Size.new( 10, 0), Size.new(400, 0), 0, Alignment::Center)
+        item2 = BoxLayoutItemData.new(Size.new(200, 0), Size.new(100, 0), Size.new(400, 0), 2, Alignment::Center)
+        item3 = BoxLayoutItemData.new(Size.new(200, 0), Size.new(100, 0), Size.new(400, 0), 3, Alignment::Center)
+        item4 = BoxLayoutItemData.new(Size.new(200, 0), Size.new( 10, 0), Size.new(400, 0), 0, Alignment::Center)
+        LayoutMath.calculateWidths([item1, item2, item3, item4], 100).should eq([10, 100, 100, 10])
+        LayoutMath.calculateWidths([item1, item2, item3, item4], 220).should eq([10, 100, 100, 10])
+        LayoutMath.calculateWidths([item1, item2, item3, item4], 240).should eq([20, 100, 100, 20])
+        LayoutMath.calculateWidths([item1, item2, item3, item4], 600).should eq([200, 100, 100, 200])
+        LayoutMath.calculateWidths([item1, item2, item3, item4], 650).should eq([200, 100, 150, 200])
+        LayoutMath.calculateWidths([item1, item2, item3, item4], 1200).should eq([200, 400, 400, 200])
+        LayoutMath.calculateWidths([item1, item2, item3, item4], 1400).should eq([300, 400, 400, 300])
+        LayoutMath.calculateWidths([item1, item2, item3, item4], 1600).should eq([400, 400, 400, 400])
+        LayoutMath.calculateWidths([item1, item2, item3, item4], 1800).should eq([400, 400, 400, 400])
       end
     end
 
