@@ -1,5 +1,6 @@
 require "../base/base_object"
 require "../base/rect"
+require "../base/size"
 require "../widget/widget"
 require "./alignment"
 require "./layout"
@@ -8,10 +9,10 @@ module Ltk
   abstract class LayoutItem < BaseObject
     getter item : (Widget | Layout)
     property alignment : Alignment = Alignment::Center
-    
+
     def initialize(@item : (Widget | Layout), @alignment = Alignment::Center)
     end
-    
+
     @[AlwaysInline]
     def x : Int32
       geometry.x
@@ -48,6 +49,14 @@ module Ltk
       end
     end
 
+    def preferred_size : Size
+      case @item
+        when Widget then @item.as(Widget).preferred_size
+      else
+        Size.ZERO
+      end
+    end
+
     def preferred_width : Int32
       case @item
         when Widget then @item.as(Widget).preferred_width
@@ -64,6 +73,14 @@ module Ltk
       end
     end
 
+    def minimum_size : Size
+      case @item
+        when Widget then @item.as(Widget).minimum_size
+      else
+        Size.ZERO
+      end
+    end
+
     def minimum_width : Int32
       case @item
         when Widget then @item.as(Widget).minimum_width
@@ -77,6 +94,14 @@ module Ltk
         when Widget then @item.as(Widget).minimum_height
         else
           0
+      end
+    end
+
+    def maximum_size : Size
+      case @item
+        when Widget then @item.as(Widget).maximum_size
+      else
+        Size.ZERO
       end
     end
 
