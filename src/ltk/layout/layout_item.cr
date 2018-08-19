@@ -53,7 +53,7 @@ module Ltk
       case @item
         when Widget then @item.as(Widget).preferred_size
       else
-        Size.ZERO
+        Size::ZERO
       end
     end
 
@@ -77,7 +77,7 @@ module Ltk
       case @item
         when Widget then @item.as(Widget).minimum_size
       else
-        Size.ZERO
+        Size::ZERO
       end
     end
 
@@ -101,7 +101,7 @@ module Ltk
       case @item
         when Widget then @item.as(Widget).maximum_size
       else
-        Size.ZERO
+        Size::ZERO
       end
     end
 

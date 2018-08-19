@@ -7,15 +7,15 @@ module Ltk
     def calculate_widths(items : Array(BoxLayoutItemData), layout_width : Int32) : Array(Int32)
       return [calculate_width(items.first, layout_width)] if items.size == 1
 
-      sum_minimum_width = 0
-      sum_maximum_width = 0
-      sum_min_zs = 0
-      sum_min_ps = 0
-      sum_max_zs = 0
-      sum_max_ps = 0
-      sum_pref_zs = 0
-      sum_pref_ps = 0
-      sum_stretch = 0
+      sum_minimum_width = 0_i64
+      sum_maximum_width = 0_i64
+      sum_min_zs = 0_i64
+      sum_min_ps = 0_i64
+      sum_max_zs = 0_i64
+      sum_max_ps = 0_i64
+      sum_pref_zs = 0_i64
+      sum_pref_ps = 0_i64
+      sum_stretch = 0_i64
 
       items.each_with_index do |item, index|
         sum_minimum_width += item.minimum_width
