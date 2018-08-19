@@ -4,8 +4,8 @@ module Ltk
   module LayoutMath
     extend self
 
-    def calculateWidths(items : Array(BoxLayoutItemData), layout_width : Int32) : Array(Int32)
-      return [calculateWidth(items.first, layout_width)] if items.size == 1
+    def calculate_widths(items : Array(BoxLayoutItemData), layout_width : Int32) : Array(Int32)
+      return [calculate_width(items.first, layout_width)] if items.size == 1
 
       sum_minimum_width = 0
       sum_maximum_width = 0
@@ -94,7 +94,7 @@ module Ltk
       end
     end
 
-    def calculateWidth(item : BoxLayoutItemData, layout_width : Int32) : Int32
+    def calculate_width(item : BoxLayoutItemData, layout_width : Int32) : Int32
       if layout_width <= item.minimum_width
         item.minimum_width
       elsif layout_width <= item.preferred_width
