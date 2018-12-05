@@ -27,8 +27,11 @@ module Ltk
     protected def arrange_items
       item_datas = @items.map {|item| item.data }
       widths = LayoutMath.calculate_widths item_datas, @geometry.width
-      puts "widths:"
-      pp widths
+      heights = @items.map_with_index do |item, index|
+        LayoutMath.calculate_height(item_datas[index], @geometry.height)
+      end
+      #pp widths
+      #pp heights
       x = @geometry.x
       @items.each_with_index do |item, index|
         item.geometry = Rect.new(x, item.y, widths[index], item.height)

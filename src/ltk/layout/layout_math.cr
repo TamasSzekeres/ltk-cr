@@ -33,6 +33,7 @@ module Ltk
       end
 
       if sum_minimum_width >= layout_width
+        puts "l.w <= sum_min_w (#{layout_width} <= #{sum_minimum_width})"
         items.map do |item|
           item.minimum_width
         end
@@ -55,7 +56,7 @@ module Ltk
           if item.stretch == 0
             item.preferred_width
           else
-            width = Math.min(remaining_width * item.stretch / remaining_stretch, item.maximum_width)
+            width = Math.max(Math.min(remaining_width * item.stretch / remaining_stretch, item.maximum_width), item.minimum_width)
             remaining_width -= width
             remaining_stretch -= item.stretch
             if width < item.maximum_width
@@ -101,6 +102,16 @@ module Ltk
         item.preferred_width
       else
         Math.min(layout_width, item.maximum_width)
+      end
+    end
+
+    def calculate_height(item : BoxLayoutItemData, layout_height : Int32) : Int32
+      if layout_height <= item.minimum_height
+        item.minimum_height
+      elsif layout_height <= item.preferred_height
+        item.preferred_height
+      else
+        Math.min(layout_height, item.maximum_height)
       end
     end
   end

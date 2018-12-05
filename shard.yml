@@ -12,6 +12,6 @@ dependencies:
     github: TamasSzekeres/cairo-cr
     branch: master
 
-crystal: 0.24.1
+crystal: 0.27.0
 
 license: MIT

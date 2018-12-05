@@ -14,7 +14,7 @@ module Ltk
     end
 
     def data : BoxLayoutItemData
-      BoxLayoutItemData.new(preferred_size, minimum_size, maximum_size, stretch, alignment)
+      BoxLayoutItemData.new(preferred_size, minimum_size, maximum_size, stretch, alignment, size_policies)
     end
   end
 end

@@ -2,6 +2,7 @@ require "x11"
 
 require "../base/margins"
 require "../base/rect"
+require "../base/size_policies"
 require "../event/*"
 require "../layout/layout"
 
@@ -14,8 +15,10 @@ module Ltk
     getter parent : Widget?
     getter layout : Layout? = nil
     getter geometry : Rect
+    getter preferred_size : Size
     getter minimum_size : Size
     getter maximum_size : Size
+    getter size_policies : SizePolicies
     getter margins : Margins = Margins::ZERO
     getter display : Display
     getter screen : Screen
@@ -25,8 +28,10 @@ module Ltk
 
     def initialize(@parent = nil)
       @geometry = Rect.new 0, 0, 100, 100
+      @preferred_size = Size::ZERO
       @minimum_size = Size::ZERO
       @maximum_size = Size::MAX
+      @size_policies = SizePolicies.new
 
       @children = Array(Widget).new
       if @parent.is_a? Widget
@@ -190,8 +195,8 @@ module Ltk
       changes = WindowChanges.new
       changes.x = rect.x
       changes.y = rect.y
-      changes.width = rect.width
-      changes.height = rect.height
+      changes.width = Math.max(rect.width, 1)
+      changes.height = Math.max(rect.height, 1)
       @display.configure_window(@window, X11::C::CWX | X11::C::CWY | X11::C::CWWidth | X11::C::CWHeight, changes)
       @geometry = rect
     end
@@ -216,16 +221,19 @@ module Ltk
                @geometry.height - @margins.top - @margins.bottom)
     end
 
+    @[AlwaysInline]
     def preferred_width : Int32
-      preferred_size.width
+      @preferred_size.width
     end
 
+    @[AlwaysInline]
     def preferred_height : Int32
-      preferred_size.height
+      @preferred_size.height
     end
 
-    def preferred_size : Size
-      Size.new(Math.min(0, minimum_width), Math.min(0, minimum_height))
+    def preferred_size=(s : Size)
+      @preferred_size = s
+      # invalidate_geometry
     end
 
     @[AlwaysInline]
@@ -256,6 +264,24 @@ module Ltk
     def maximum_size=(s : Size)
       @maximum_size = s
       # invalidate_geometry
+    end
+
+    @[AlwaysInline]
+    def horitontal_size_policy : SizePolicy
+      @size_policies.horizontal
+    end
+
+    @[AlwaysInline]
+    def vertical_size_policy : SizePolicy
+      @size_policies.vertical
+    end
+
+    def size_policies=(@size_policies : SizePolicies)
+      # invalidate_geometry
+    end
+
+    def set_size_policies(horizontal : SizePolicy = SizePolicy::Expanding, vertical : SizePolicy = SizePolicy::Expanding)
+      @size_policies = SizePolicies.new(horizontal, vertical)
     end
 
     def layout=(layout : Layout?)

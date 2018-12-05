@@ -21,7 +21,7 @@ module Layout
       one_button = PushButton.new "One", main_win
       one_button.object_name = "one_button"
       one_button.geometry = Rect.new 20, 20, 150, 23
-      #one_button.minimum_size = Size.new 200, 23
+      one_button.minimum_size = Size.new 50, 23
       #one_button.maximum_size = Size.new 200, 23
       one_button.on_click = ->close_button_click
 

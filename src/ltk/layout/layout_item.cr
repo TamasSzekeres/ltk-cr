@@ -1,16 +1,18 @@
 require "../base/base_object"
 require "../base/rect"
 require "../base/size"
+require "../base/size_policies"
 require "../widget/widget"
-require "./alignment"
 require "./layout"
 
 module Ltk
   abstract class LayoutItem < BaseObject
     getter item : (Widget | Layout)
     property alignment : Alignment = Alignment::Center
+    property size_policies : SizePolicies
 
-    def initialize(@item : (Widget | Layout), @alignment = Alignment::Center)
+    def initialize(@item : (Widget | Layout), @alignment = Alignment::Center,
+                   @size_policies : SizePolicies = SizePolicies::EXPANDING)
     end
 
     @[AlwaysInline]
