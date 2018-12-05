@@ -7,6 +7,8 @@ module Ltk
 
     def initialize(parent = nil)
       super parent
+      cursor = display.create_font_cursor(X11::C::XC_XTERM.to_u32)
+      display.define_cursor(window, cursor)
     end
 
     protected def click_event

@@ -22,6 +22,7 @@ module Ltk
     getter margins : Margins = Margins::ZERO
     getter display : Display
     getter screen : Screen
+    property cursor : X11::C::Cursor = 2
     getter children : Array(Widget)
 
     property on_click : ClickEvent?
