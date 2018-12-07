@@ -19,6 +19,6 @@ targets:
   button:
     main: src/button.cr
 
-crystal: 0.24.1
+crystal: 0.27.0
 
 license: MIT
