@@ -1,7 +1,9 @@
-module Ltk
-  alias TimerProc = Proc(Void?)
+require "./base_object"
 
-  class Timer
+module Ltk
+  alias TimerProc = Timer -> Void
+
+  class Timer < BaseObject
     property interval : ::Time::Span
     getter? looping = false
 
@@ -9,11 +11,11 @@ module Ltk
       @timeout = nil
     end
 
-    def initialize(@interval = 1.second, &block : Timer -> Void)
+    def initialize(@interval = 1.second, &block : TimerProc)
       @timeout = block
     end
 
-    def on_timeout(&block : Timer -> Void)
+    def on_timeout(&block : TimerProc)
       @timeout = block
     end
 
