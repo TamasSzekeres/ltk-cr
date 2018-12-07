@@ -2,7 +2,7 @@ module Ltk
   alias TimerProc = Proc(Void?)
 
   class Timer
-    property interval : Time::Span
+    property interval : ::Time::Span
     property stop_at : Time?
     property timer_event : TimerProc? = nil
     property timeout_event : TimerProc? = nil
