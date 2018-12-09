@@ -35,6 +35,23 @@ module Ltk
       repaint
     end
 
+    protected def key_press_event(event : KeyEvent)
+      super
+      if event.key_sym == 32_u64
+        @down = true
+        repaint
+      end
+    end
+
+    protected def key_release_event(event : KeyEvent)
+      super
+      if @down && (event.key_sym == 32_u64)
+        @down = false
+        repaint
+        click_event
+      end
+    end
+
     protected def mouse_down_event(event : MouseEvent)
       super
       @down = true
@@ -54,7 +71,6 @@ module Ltk
     protected def paint_event
       p = Painter.new self
       p.draw_push_button self, @hover, @down
-      p.finalize
     end
 
     def text=(@text)

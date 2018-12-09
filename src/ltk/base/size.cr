@@ -113,6 +113,10 @@ module Ltk
     def /(s : Float) : Size
       Size.new (@width / c).round.to_i, (@height / c).round.to_i
     end
+
+    def to_s(io)
+      io << @width << @height
+    end
   end
 
   struct Float

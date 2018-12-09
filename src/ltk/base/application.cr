@@ -5,7 +5,9 @@ require "../event/event_listener"
 module Ltk
   include X11
 
-  abstract class Application
+  module Application
+    extend self
+
     WM_DELETE_WINDOW_STR = "WM_DELETE_WINDOW"
 
     @@display = Display.new
@@ -14,13 +16,17 @@ module Ltk
     @@event_listeners = Hash(X11::C::Window, EventListener).new
     @@widgets = Array(Widget).new
 
+    @@focus_widget : Widget? = nil
+
     @running = false
 
-    private def self.finalize
+    class_getter keyboard_modifiers : KeyboardModifiers = KeyboardModifiers::None
+
+    private def finalize
       @@display.close
     end
 
-    def self.run(args : Array(String))
+    def run(args : Array(String))
       return 1 if @@display.is_a? Nil
 
       @@running = true
@@ -49,36 +55,44 @@ module Ltk
       0
     end
 
-    def self.close
+    def close
       @@running = false
     end
 
-    def self.add_event_listener(el : EventListener)
+    def add_event_listener(el : EventListener)
       @@event_listeners[el.window] = el
     end
 
-    def self.remove_event_listener(el : EventListener)
+    def remove_event_listener(el : EventListener)
       @@event_listeners.delete el.window
     end
 
-    def self.add_widget(widget : Widget)
+    def add_widget(widget : Widget)
       @@widgets << widget
     end
 
-    def self.display
+    def display
       @@display
     end
 
-    def self.wm_delete_window
+    def wm_delete_window
       @@wm_delete_window
     end
 
-    def self.wm_delete_window=(value)
+    def wm_delete_window=(value)
       @@wm_delete_window = value
     end
 
-    def self.is_running?
+    def running?
       @@running
+    end
+
+    def focus_widget : Widget?
+      @@focus_widget
+    end
+
+    def focus_widget=(widget : Widget?)
+      @@focus_widget = widget
     end
   end
 end

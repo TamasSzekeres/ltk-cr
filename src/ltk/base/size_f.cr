@@ -120,5 +120,9 @@ module Ltk
     def to_size
       Size.new @width.round, @height.round
     end
+
+    def to_s(io)
+      io << @width << @height
+    end
   end
 end

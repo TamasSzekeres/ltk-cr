@@ -3,6 +3,7 @@ require "x11"
 require "../base/margins"
 require "../base/rect"
 require "../base/size_policies"
+require "../enums/key_code"
 require "../event/*"
 require "../layout/layout"
 
@@ -22,6 +23,7 @@ module Ltk
     getter margins : Margins = Margins::ZERO
     getter display : Display
     getter screen : Screen
+    getter window : X11::C::Window
     property cursor : X11::C::Cursor = 2
     getter children : Array(Widget)
 
@@ -66,6 +68,7 @@ module Ltk
         @window,
         ButtonPressMask | ButtonReleaseMask | ButtonMotionMask |
         ExposureMask | StructureNotifyMask |
+        FocusChangeMask |
         EnterWindowMask | LeaveWindowMask |
         KeyPressMask | KeyReleaseMask)
 
@@ -100,6 +103,14 @@ module Ltk
       end
 
       case event
+      when FocusChangeEvent
+        focus_change_event = event.as(FocusChangeEvent)
+        case focus_change_event
+          when .in?
+            self.focus_received_event
+          when .out?
+            self.focus_lost_event
+        end
       when ButtonEvent
         button_event = event.as(ButtonEvent)
         button = case button_event.button
@@ -113,11 +124,11 @@ module Ltk
           EventButton::None
         end
         if button_event.press?
-          self.mouse_down_event(MouseEvent.new(button,
+          mouse_down_event(MouseEvent.new(button,
             Point.new(button_event.x, button_event.y),
             Point.new(button_event.x_root, button_event.y_root)))
         else
-          self.mouse_up_event(MouseEvent.new(button,
+          mouse_up_event(MouseEvent.new(button,
             Point.new(button_event.x, button_event.y),
             Point.new(button_event.x_root, button_event.y_root)))
         end
@@ -126,15 +137,19 @@ module Ltk
         end
       when CrossingEvent
         if event.as(CrossingEvent).enter?
-          self.enter_event
+          enter_event
         else
-          self.leave_event
+          leave_event
         end
-      when KeyEvent
-        begin
+      when X11::KeyEvent
+        case key_event = event.as(X11::KeyEvent)
+        when .press?
+          key_press_event(Ltk::KeyEvent.new(event.keycode, key_event.lookup_keysym(0), KeyboardModifiers.new(key_event.state)))
+        when .release?
+          key_release_event(Ltk::KeyEvent.new(event.keycode, key_event.lookup_keysym(0), KeyboardModifiers.new(key_event.state)))
         end
       when ExposeEvent
-        self.paint_event
+        paint_event
       when ConfigureEvent
         configure_event(event.x, event.y, event.width, event.height)
       else
@@ -143,14 +158,37 @@ module Ltk
       true
     end
 
+    def focused? : Bool
+      Application.focus_widget == self
+    end
+
+    def focus!
+      if Application.running?
+        Application.focus_widget = self
+        @display.set_input_focus(@window, X11::C::RevertToParent, X11::C::CurrentTime)
+      end
+      self
+    end
+
+    def clear_focus
+      Application.focus_widget = nil if focused?
+      self
+    end
+
     def repaint
       self.paint_event
     end
 
     protected def click_event
-      if @on_click.is_a? ClickEvent
-        (@on_click.as ClickEvent).call
+      if on_click = @on_click
+        on_click.call
       end
+    end
+
+    protected def focus_received_event
+    end
+
+    protected def focus_lost_event
     end
 
     protected def enter_event
@@ -159,7 +197,14 @@ module Ltk
     protected def leave_event
     end
 
+    protected def key_press_event(event : KeyEvent)
+    end
+
+    protected def key_release_event(event : KeyEvent)
+    end
+
     protected def mouse_down_event(event : MouseEvent)
+      focus!
     end
 
     protected def mouse_up_event(event : MouseEvent)

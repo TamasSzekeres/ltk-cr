@@ -7,7 +7,7 @@ module Ltk
   include X11
   include Cairo
 
-  class Painter
+  struct Painter
     def initialize(widget : Widget)
       @brush = Color::WHITE
 
@@ -20,12 +20,12 @@ module Ltk
       # @pattern = nil
     end
 
-    def finalize
+    # def finalize
       # Cairo.destroy @ctx
       # Cairo.surface_destroy @surface
       #
       # Cairo.pattern_destroy @pattern unless @pattern == nil
-    end
+    # end
 
     def draw_round_rect(x : Int32, y : Int32, w : Int32, h : Int32, r : Int32)
       # if r > (h / 2)
@@ -138,6 +138,7 @@ module Ltk
 
       #@ctx.scale 3.0_f64, 3.0_f64
 
+      # Draw Borders
       pattern = Pattern.create_linear 0.0_f64, 0.0_f64, 0.0_f64, h.to_f
       pattern.add_color_stop 0.0_f64, 46.0_f64 / 255.0_f64, 46.0_f64 / 255.0_f64, 46.0_f64 / 255.0_f64
       pattern.add_color_stop 1.0_f64, 60.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64
@@ -154,6 +155,33 @@ module Ltk
       w -= 2; h -= 2
       @ctx.set_source_rgb 56.0_f64 / 255.0_f64, 56.0_f64 / 255.0_f64, 56.0_f64 / 255.0_f64
       fill_round_rect 2, 2, w, h, 3
+
+      # Draw Text
+      text = line_edit.text
+
+      @ctx.select_font_face("Sans",
+        Cairo::FontSlant::Normal,
+        Cairo::FontWeight::Normal)
+      @ctx.font_size = 12.0_f64
+
+      extents = @ctx.text_extents text
+      x = 10.0_f64
+      y = (line_edit.height / 2.0_f64) - (extents.height / 2 + extents.y_bearing)
+
+      @ctx.move_to x, y
+
+      @ctx.set_source_rgb 0.85_f64, 0.85_f64, 0.85_f64
+      @ctx.show_text text
+
+      # Draw Cursor
+      if line_edit.cursor_visible?
+        x = 10.0_f64
+        @ctx.set_source_rgb 1.0_f64, 1.0_f64, 1.0_f64
+        @ctx.move_to x, 0.0_f64
+        @ctx.line_to x, 22.0_f64
+        @ctx.line_width = 1.0
+        @ctx.stroke
+      end
     end
 
     private def apply_brush

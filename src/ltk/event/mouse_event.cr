@@ -3,7 +3,7 @@ require "./event_button"
 require "../base/point"
 
 module Ltk
-  class MouseEvent < Event
+  struct MouseEvent
     getter button : EventButton
     getter pos : Point
     getter global_pos : Point

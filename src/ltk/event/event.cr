@@ -1,5 +1,5 @@
 module Ltk
-  class Event
+  abstract struct Event
     def initialize
     end
   end
