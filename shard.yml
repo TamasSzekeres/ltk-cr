@@ -8,6 +8,8 @@ description: |
   Lightweight Windowing Toolkit for Crystal language.
 
 dependencies:
+  locale:
+    github: light-side-software/locale.cr
   cairo:
     github: TamasSzekeres/cairo-cr
     branch: master

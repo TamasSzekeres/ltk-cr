@@ -144,9 +144,9 @@ module Ltk
       when X11::KeyEvent
         case key_event = event.as(X11::KeyEvent)
         when .press?
-          key_press_event(Ltk::KeyEvent.new(event.keycode, key_event.lookup_keysym(0), KeyboardModifiers.new(key_event.state)))
+          key_press_event(Ltk::KeyEvent.new(key_event))
         when .release?
-          key_release_event(Ltk::KeyEvent.new(event.keycode, key_event.lookup_keysym(0), KeyboardModifiers.new(key_event.state)))
+          key_release_event(Ltk::KeyEvent.new(key_event))
         end
       when ExposeEvent
         paint_event

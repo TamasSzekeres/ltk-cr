@@ -1,3 +1,4 @@
+require "locale"
 require "x11"
 
 require "../event/event_listener"
@@ -28,6 +29,8 @@ module Ltk
 
     def run(args : Array(String))
       return 1 if @@display.is_a? Nil
+
+      LibC.setlocale(LibC::LC_ALL, "")
 
       @@running = true
       while @@running

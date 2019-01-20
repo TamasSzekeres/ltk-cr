@@ -22,7 +22,7 @@ module LineEdit
       line_edit.geometry = Rect.new 20, 63, 150, 23
       line_edit.text = "line"
       line_edit.focus!
-      p line_edit.focused?
+      #p line_edit.focused?
 
       # Runs the application.
       Application.run ARGV

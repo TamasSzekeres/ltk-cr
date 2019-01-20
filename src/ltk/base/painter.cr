@@ -8,6 +8,8 @@ module Ltk
   include Cairo
 
   struct Painter
+    private getter font_extents : Cairo::FontExtents
+
     def initialize(widget : Widget)
       @brush = Color::WHITE
 
@@ -18,6 +20,13 @@ module Ltk
       )
       @ctx = Cairo::Context.new @surface
       # @pattern = nil
+
+      @ctx.select_font_face("Sans",
+        Cairo::FontSlant::Normal,
+        Cairo::FontWeight::Normal)
+      @ctx.font_size = 12.0_f64
+
+      @font_extents = @ctx.font_extents
     end
 
     # def finalize
@@ -124,7 +133,7 @@ module Ltk
 
       extents = @ctx.text_extents text
       x = (button.width / 2.0_f64) - (extents.width / 2 + extents.x_bearing)
-      y = (button.height / 2.0_f64) - (extents.height / 2 + extents.y_bearing)
+      y = (button.height / 2.0_f64) - (@font_extents.height / 2 - @font_extents.ascent)
 
       @ctx.move_to x, y
 
@@ -159,14 +168,9 @@ module Ltk
       # Draw Text
       text = line_edit.text
 
-      @ctx.select_font_face("Sans",
-        Cairo::FontSlant::Normal,
-        Cairo::FontWeight::Normal)
-      @ctx.font_size = 12.0_f64
-
       extents = @ctx.text_extents text
       x = 10.0_f64
-      y = (line_edit.height / 2.0_f64) - (extents.height / 2 + extents.y_bearing)
+      y = (line_edit.height / 2.0_f64) - (@font_extents.height / 2 - @font_extents.ascent)
 
       @ctx.move_to x, y
 
@@ -174,8 +178,9 @@ module Ltk
       @ctx.show_text text
 
       # Draw Cursor
-      if line_edit.cursor_visible?
-        x = 10.0_f64
+      if line_edit.cursor_visible? && line_edit.cursor_position >= 0
+        extents = @ctx.text_extents text[0...line_edit.cursor_position]
+        x = 10.5_f64 + extents.width
         @ctx.set_source_rgb 1.0_f64, 1.0_f64, 1.0_f64
         @ctx.move_to x, 0.0_f64
         @ctx.line_to x, 22.0_f64
