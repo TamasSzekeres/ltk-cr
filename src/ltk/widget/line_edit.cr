@@ -7,6 +7,8 @@ module Ltk
     getter text = ""
     getter? cursor_visible : Bool = false
     getter cursor_position : Int32 = 0
+    getter text_translate = Point::ZERO
+    getter cursor_rect : Rect = Rect.new(0, 0, 1, 10)
 
     def initialize(parent = nil)
       super parent
@@ -72,6 +74,7 @@ module Ltk
       unless key_char == ::Char::ZERO
         @text += key_char
         @cursor_position += 1
+        recalc_cursor
         repaint
       end
     end
@@ -95,10 +98,44 @@ module Ltk
       p.draw_line_edit self
     end
 
+    protected def recalc_cursor
+      p = Painter.new self
+      w = width
+      h = height
+      right_bound = w - 5
+
+      text_extents = p.text_extents @text
+      text_width = text_extents.width
+      text_left = @text[0...@cursor_position]
+      text_extents = p.text_extents text_left
+      @cursor_rect = Rect.new((5.5_f64 + text_extents.width + @text_translate.x).round.to_i, 5, 1, h - 10)
+
+      #puts "recalc_cursor w=#{w} cp=#{@cursor_position}"
+      #puts "left=#{text_left} w=#{text_extents.width}"
+      if @cursor_rect.x > right_bound
+        @text_translate.x = right_bound - text_extents.width.round.to_i - 5
+        @cursor_rect.x = right_bound
+        @cursor_rect.width = 1
+      else
+        if @text_translate.x < 0
+          @cursor_rect.x = right_bound
+          @text_translate.x = right_bound - text_extents.width.to_i - 5
+          if @text_translate.x > 0
+            @cursor_rect.x = @cursor_rect.x - @text_translate.x
+            @text_translate.x = 0
+          end
+          @cursor_rect.width = 1
+        end
+      end
+      #puts "new cursor x=#{@cursor_rect.x}"
+      #puts "text_translate.x = #{@text_translate.x}"
+    end
+
     private def move_cursor_home
       if @cursor_position != 0
         @cursor_position = 0
         @cursor_visible = true
+        recalc_cursor
         repaint
       end
     end
@@ -108,6 +145,7 @@ module Ltk
       if @cursor_position != size
         @cursor_position = size
         @cursor_visible = true
+        recalc_cursor
         repaint
       end
     end
@@ -116,6 +154,7 @@ module Ltk
       if @cursor_position > 0
         @cursor_position -= 1
         @cursor_visible = true
+        recalc_cursor
         repaint
       end
     end
@@ -124,6 +163,7 @@ module Ltk
       if @cursor_position < @text.size
         @cursor_position += 1
         @cursor_visible = true
+        recalc_cursor
         repaint
       end
     end
@@ -133,6 +173,7 @@ module Ltk
         @text = @text[0...(@cursor_position - 1)] + @text[@cursor_position..-1]
         @cursor_position -= 1
         @cursor_visible = true
+        recalc_cursor
         repaint
       end
     end
@@ -142,12 +183,14 @@ module Ltk
       if size > @cursor_position
         @text = @text[0...@cursor_position] + @text[(@cursor_position + 1)..-1]
         @cursor_visible = true
+        recalc_cursor
         repaint
       end
     end
 
     def text=(@text : String)
       @cursor_position = @text.size
+      recalc_cursor
       repaint
     end
 
@@ -159,6 +202,7 @@ module Ltk
       end
       return if @cursor_position == pos
       @cursor_position = pos
+      recalc_cursor
       repaint
     end
   end

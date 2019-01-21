@@ -8,7 +8,8 @@ module Ltk
   include Cairo
 
   struct Painter
-    private getter font_extents : Cairo::FontExtents
+    getter font_extents : Cairo::FontExtents
+    private getter space_width : Float64
 
     def initialize(widget : Widget)
       @brush = Color::WHITE
@@ -27,6 +28,8 @@ module Ltk
       @ctx.font_size = 12.0_f64
 
       @font_extents = @ctx.font_extents
+
+      @space_width = @ctx.text_extents("a a").width - @ctx.text_extents("aa").width
     end
 
     # def finalize
@@ -165,12 +168,19 @@ module Ltk
       @ctx.set_source_rgb 56.0_f64 / 255.0_f64, 56.0_f64 / 255.0_f64, 56.0_f64 / 255.0_f64
       fill_round_rect 2, 2, w, h, 3
 
+      # Clip region for text and cursor
+      w = line_edit.width
+      h = line_edit.height
+      @ctx.rectangle(5.0_f64, 0_f64, w - 5.0_f64, h.to_f64)
+      @ctx.clip
+
       # Draw Text
       text = line_edit.text
+      text_translate = line_edit.text_translate
 
       extents = @ctx.text_extents text
-      x = 10.0_f64
-      y = (line_edit.height / 2.0_f64) - (@font_extents.height / 2 - @font_extents.ascent)
+      x = 5.0_f64 + text_translate.x
+      y = (line_edit.height / 2.0_f64) - (@font_extents.height / 2 - @font_extents.ascent) + text_translate.y
 
       @ctx.move_to x, y
 
@@ -180,12 +190,17 @@ module Ltk
       # Draw Cursor
       if line_edit.cursor_visible? && line_edit.cursor_position >= 0
         extents = @ctx.text_extents text[0...line_edit.cursor_position]
-        x = 10.5_f64 + extents.width
+        x = 5.5_f64 + extents.width
         @ctx.set_source_rgb 1.0_f64, 1.0_f64, 1.0_f64
-        @ctx.move_to x, 0.0_f64
-        @ctx.line_to x, 22.0_f64
-        @ctx.line_width = 1.0
-        @ctx.stroke
+        rect = line_edit.cursor_rect
+        if rect.width > 1
+          puts "rect.width > 0 : #{rect.width}"
+        else
+          @ctx.move_to rect.x.to_f64, 4.0_f64
+          @ctx.line_to rect.x.to_f64, h.to_f64
+          @ctx.line_width = 1.0
+          @ctx.stroke
+        end
       end
     end
 
@@ -215,6 +230,18 @@ module Ltk
       #   Cairo.set_source @ctx, @pattern
       # else
       # end
+    end
+
+    def text_extents(text : String, trailing_ws : Bool = true) : Cairo::TextExtents
+      if trailing_ws
+        ws_count = text.count(' ')
+        if ws_count > 0
+          te = @ctx.text_extents text.delete(' ')
+          te.width += (ws_count * @space_width)
+          return te
+        end
+      end
+      @ctx.text_extents text
     end
   end # class Painter
 end # module Ltk

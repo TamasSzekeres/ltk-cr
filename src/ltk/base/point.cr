@@ -3,6 +3,8 @@ module Ltk
     property x : Int32
     property y : Int32
 
+    ZERO = Point.new(0, 0)
+
     def initialize(@x = Int32.zero, @y = Int32.zero)
     end
 
