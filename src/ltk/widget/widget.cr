@@ -186,9 +186,11 @@ module Ltk
     end
 
     protected def focus_received_event
+      repaint
     end
 
     protected def focus_lost_event
+      repaint
     end
 
     protected def enter_event

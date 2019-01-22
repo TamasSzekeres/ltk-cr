@@ -89,15 +89,19 @@ module Ltk
 
       # @ctx.scale 3.0_f64, 3.0_f64
 
-      pattern = Pattern.create_linear 0.0_f64, 0.0_f64, 0.0_f64, h.to_f
-      if down
-        pattern.add_color_stop 0.0_f64, 46.0_f64 / 255.0_f64, 46.0_f64 / 255.0_f64, 46.0_f64 / 255.0_f64
-        pattern.add_color_stop 1.0_f64, 60.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64
+      if button.focused?
+        @ctx.set_source_rgb 83.0_f64 / 255.0_f64, 160.0_f64 / 255.0_f64, 237.0_f64 / 255.0_f64
       else
-        pattern.add_color_stop 0.0_f64, 0.25_f64, 0.25_f64, 0.25_f64
-        pattern.add_color_stop 1.0_f64, 0.18_f64, 0.18_f64, 0.18_f64
+        pattern = Pattern.create_linear 0.0_f64, 0.0_f64, 0.0_f64, h.to_f
+        if down
+          pattern.add_color_stop 0.0_f64, 46.0_f64 / 255.0_f64, 46.0_f64 / 255.0_f64, 46.0_f64 / 255.0_f64
+          pattern.add_color_stop 1.0_f64, 60.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64
+        else
+          pattern.add_color_stop 0.0_f64, 0.25_f64, 0.25_f64, 0.25_f64
+          pattern.add_color_stop 1.0_f64, 0.18_f64, 0.18_f64, 0.18_f64
+        end
+        @ctx.source = pattern
       end
-      @ctx.source = pattern
       fill_round_rect 0, 0, w, h, 3
 
       w -= 2; h -= 2
@@ -145,23 +149,32 @@ module Ltk
     end
 
     def draw_line_edit(line_edit : LineEdit)
+      focused = line_edit.focused?
       w = line_edit.width
       h = line_edit.height
 
       #@ctx.scale 3.0_f64, 3.0_f64
 
       # Draw Borders
-      pattern = Pattern.create_linear 0.0_f64, 0.0_f64, 0.0_f64, h.to_f
-      pattern.add_color_stop 0.0_f64, 46.0_f64 / 255.0_f64, 46.0_f64 / 255.0_f64, 46.0_f64 / 255.0_f64
-      pattern.add_color_stop 1.0_f64, 60.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64
-      @ctx.source = pattern
+      if focused
+        @ctx.set_source_rgb 83.0_f64 / 255.0_f64, 160.0_f64 / 255.0_f64, 237.0_f64 / 255.0_f64
+      else
+        pattern = Pattern.create_linear 0.0_f64, 0.0_f64, 0.0_f64, h.to_f
+        pattern.add_color_stop 0.0_f64, 46.0_f64 / 255.0_f64, 46.0_f64 / 255.0_f64, 46.0_f64 / 255.0_f64
+        pattern.add_color_stop 1.0_f64, 60.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64
+        @ctx.source = pattern
+      end
       fill_round_rect 0, 0, w, h, 3
 
       w -= 2; h -= 2
-      pattern = Pattern.create_linear 0.0_f64, 0.0_f64, 0.0_f64, h.to_f
-      pattern.add_color_stop 0.0_f64, 50.0_f64 / 255.0_f64, 50.0_f64 / 255.0_f64, 50.0_f64 / 255.0_f64
-      pattern.add_color_stop 1.0_f64, 53.0_f64 / 255.0_f64, 53.0_f64 / 255.0_f64, 53.0_f64 / 255.0_f64
-      @ctx.source = pattern
+      if focused
+        @ctx.set_source_rgb 48.0_f64 / 255.0_f64, 60.0_f64 / 255.0_f64, 72.0_f64 / 255.0_f64
+      else
+        pattern = Pattern.create_linear 0.0_f64, 0.0_f64, 0.0_f64, h.to_f
+        pattern.add_color_stop 0.0_f64, 50.0_f64 / 255.0_f64, 50.0_f64 / 255.0_f64, 50.0_f64 / 255.0_f64
+        pattern.add_color_stop 1.0_f64, 53.0_f64 / 255.0_f64, 53.0_f64 / 255.0_f64, 53.0_f64 / 255.0_f64
+        @ctx.source = pattern
+      end
       fill_round_rect 1, 1, w, h, 3
 
       w -= 2; h -= 2
