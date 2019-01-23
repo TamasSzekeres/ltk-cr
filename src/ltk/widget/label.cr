@@ -23,8 +23,18 @@ module Ltk
       p.draw_label self
     end
 
-    def text=(@text : String)
-      repaint
+    def alignment=(align : Alignment)
+      if @alignment != align
+        @alignment = align
+        repaint
+      end
+    end
+
+    def text=(text : String)
+      if @text != text
+        @text = text
+        repaint
+      end
     end
 
     def has_associated_widget? : Bool

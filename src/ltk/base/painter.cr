@@ -99,12 +99,16 @@ module Ltk
         0.0_f64
       end
       y = case label.alignment
-      when .top? then 0.0_f64
+      when .top? then @font_extents.height
       when .bottom? then h.to_f64 - @font_extents.descent
       when .v_center? then (h + @font_extents.ascent) / 2.0_f64
       else
         0.0_f64
       end
+
+      @ctx.set_source_rgb 0.2_f64, 0.2_f64, 0.8_f64
+      @ctx.rectangle x, y - @font_extents.ascent, extents.width, @font_extents.height
+      @ctx.fill
 
       @ctx.move_to x, y
 

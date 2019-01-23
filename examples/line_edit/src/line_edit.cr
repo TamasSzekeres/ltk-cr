@@ -24,7 +24,7 @@ module LineEdit
       line_edit.focus!
       #p line_edit.focused?
 
-      label = Label.new "Entergj_:", main_win
+      label = Label.new "Enter:\nLine Two", main_win
       label.object_name = "label"
       label.geometry = Rect.new 20, 106, 150, 50
 

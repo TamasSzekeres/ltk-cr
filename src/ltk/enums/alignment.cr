@@ -13,9 +13,13 @@ module Ltk
     Bottom  = 0x0040_u32
     VCenter = 0x0080_u32
 
-    Center  = VCenter | HCenter
-    Leading  = Left
-    Trailing = Right
+    TopLeft     = Top | Left
+    BottomLeft  = Bottom | Left
+    TopRight    = Top | Right
+    BottomRight = Bottom | Right
+    Center      = VCenter | HCenter
+    Leading     = Left
+    Trailing    = Right
 
     HMask   = Left | Right | HCenter
     VMask   = Top | Bottom | VCenter
