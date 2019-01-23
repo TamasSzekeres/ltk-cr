@@ -9,7 +9,7 @@ module LineEdit
       main_win = MainWindow.new
       main_win.object_name = "main_win"
       main_win.title = "Ltk-Win"
-      main_win.geometry = Rect.new 10, 10, 190, 103
+      main_win.geometry = Rect.new 10, 10, 190, 173
 
       # Creating a PushButton on the Main Window.
       push_button = PushButton.new "PushButton", main_win
@@ -23,6 +23,10 @@ module LineEdit
       line_edit.text = "line"
       line_edit.focus!
       #p line_edit.focused?
+
+      label = Label.new "Entergj_:", main_win
+      label.object_name = "label"
+      label.geometry = Rect.new 20, 106, 150, 50
 
       # Runs the application.
       Application.run ARGV

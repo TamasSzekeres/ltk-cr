@@ -1,4 +1,5 @@
 module Ltk
+  @[Flags]
   enum Alignment : UInt32
     None   = 0
 
