@@ -18,6 +18,13 @@ module Ltk
       super parent
     end
 
+    protected def mouse_down_event(event : MouseEvent)
+      super
+      if has_associated_widget?
+        @associated_widget.not_nil!.focus!
+      end
+    end
+
     protected def paint_event
       p = Painter.new self
       p.draw_label self

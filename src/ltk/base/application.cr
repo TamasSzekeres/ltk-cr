@@ -3,6 +3,8 @@ require "x11"
 
 require "../event/event_listener"
 
+at_exit { GC.collect }
+
 module Ltk
   include X11
 
@@ -54,7 +56,6 @@ module Ltk
       end
 
       finalize
-      GC.collect
       0
     end
 

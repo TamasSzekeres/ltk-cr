@@ -83,16 +83,11 @@ module Ltk
       w = label.width
       h = label.height
 
-      @ctx.set_source_rgb 0.8_f64, 0.1_f64, 0.1_f64
-      @ctx.rectangle 0.0_f64, 0.0_f64, w.to_f, h.to_f
-      @ctx.fill
-
       # Draw text
       text = label.text
 
       extents = @ctx.text_extents text
       x = case label.alignment
-      when .left? then 0.0_f64
       when .right? then w - extents.width
       when .h_center? then (w - extents.width) / 2.0_f64
       else
@@ -101,14 +96,9 @@ module Ltk
       y = case label.alignment
       when .top? then @font_extents.height
       when .bottom? then h.to_f64 - @font_extents.descent
-      when .v_center? then (h + @font_extents.ascent) / 2.0_f64
       else
-        0.0_f64
+        (h + @font_extents.ascent) / 2.0_f64
       end
-
-      @ctx.set_source_rgb 0.2_f64, 0.2_f64, 0.8_f64
-      @ctx.rectangle x, y - @font_extents.ascent, extents.width, @font_extents.height
-      @ctx.fill
 
       @ctx.move_to x, y
 
