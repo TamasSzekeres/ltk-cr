@@ -16,7 +16,7 @@ module LineEdit
       push_button.object_name = "push_button"
       push_button.geometry = Rect.new 20, 20, 150, 23
 
-      # Creatiin a LineWdit on the Main Window
+      # Create a LineEdit on the Main Window
       line_edit = LineEdit.new main_win
       line_edit.object_name = "line_edit"
       line_edit.geometry = Rect.new 20, 63, 150, 23

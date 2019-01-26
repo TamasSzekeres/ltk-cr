@@ -94,20 +94,26 @@ module Ltk
     end
 
     protected def paint_event
-      p = Painter.new self
-      p.draw_line_edit self
+      widget_painter.draw
+    end
+
+    private def painter
+      @painter ||= Painter.new self
+    end
+
+    private def widget_painter
+      @widget_painter ||= LineEditPainter.new self, painter
     end
 
     protected def recalc_cursor
-      p = Painter.new self
       w = width
       h = height
       right_bound = w - 5
 
-      text_extents = p.text_extents @text
+      text_extents = painter.text_extents @text
       text_width = text_extents.width
       text_left = @text[0...@cursor_position]
-      text_extents = p.text_extents text_left
+      text_extents = painter.text_extents text_left
       @cursor_rect = Rect.new((5.5_f64 + text_extents.width + @text_translate.x).round.to_i, 5, 1, h - 10)
 
       #puts "recalc_cursor w=#{w} cp=#{@cursor_position}"
