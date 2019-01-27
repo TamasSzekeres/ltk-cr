@@ -1,5 +1,5 @@
 all:
-	crystal build src/line_edit.cr --link-flags -L/usr/X11R6/lib/
+	crystal build src/line_edit.cr --link-flags -L/usr/X11/lib/
 
 clean:
 	rm line_edit
