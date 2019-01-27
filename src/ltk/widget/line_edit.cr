@@ -72,7 +72,7 @@ module Ltk
       end
       key_char = event.key_char
       unless key_char == ::Char::ZERO
-        @text += key_char
+        @text = @text.insert @cursor_position, key_char
         @cursor_position += 1
         recalc_cursor
         repaint
