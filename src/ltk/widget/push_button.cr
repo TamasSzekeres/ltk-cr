@@ -7,8 +7,8 @@ module Ltk
   class PushButton < Widget
     getter text : String
 
-    @hover = false
-    @down = false
+    getter? hover : Bool = false
+    getter? down : Bool = false
 
     def initialize(parent = nil)
       super parent
@@ -70,7 +70,7 @@ module Ltk
 
     protected def paint_event
       p = Painter.new self
-      p.draw_push_button self, @hover, @down
+      style.draw_push_button p, self
     end
 
     def text=(@text)

@@ -8,6 +8,13 @@ module Ltk
     property blue : UInt8
     property alpha : UInt8
 
+    def initialize
+      @red = 0_u8
+      @green = 0_u8
+      @blue = 0_u8
+      @alpha = UInt8::MAX
+    end
+
     def initialize(@red : UInt8, @green : UInt8, @blue : UInt8, @alpha = UInt8::MAX)
     end
 

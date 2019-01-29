@@ -30,6 +30,8 @@ module Ltk
     property on_click : ClickEvent?
 
     def initialize(@parent = nil)
+      @style = nil.as(Style?)
+      @palette = nil.as(Palette?)
       @geometry = Rect.new 0, 0, 100, 100
       @preferred_size = Size::ZERO
       @minimum_size = Size::ZERO
@@ -334,6 +336,24 @@ module Ltk
 
     def layout=(layout : Layout?)
       @layout = layout
+    end
+
+    def style : Style
+      @style.same?(nil) ? Application.style : @style.not_nil!
+    end
+
+    def style=(style : Style)
+      @style = style
+      repaint
+    end
+
+    def palette : Palette
+      @palette.same?(nil) ? Application.palette : @palette.not_nil!
+    end
+
+    def palette=(palette : Palette)
+      @palette = palette
+      repaint
     end
 
     def add_child(w)

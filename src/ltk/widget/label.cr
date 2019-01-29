@@ -27,7 +27,7 @@ module Ltk
 
     protected def paint_event
       p = Painter.new self
-      p.draw_label self
+      style.draw_label p, self
     end
 
     def alignment=(align : Alignment)

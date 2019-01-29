@@ -24,6 +24,8 @@ module Ltk
     @running = false
 
     class_getter keyboard_modifiers : KeyboardModifiers = KeyboardModifiers::None
+    class_property style : Style = Style.new
+    class_property palette : Palette = Palette::DARK
 
     private def finalize
       @@display.close

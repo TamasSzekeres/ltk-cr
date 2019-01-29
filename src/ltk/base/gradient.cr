@@ -8,10 +8,10 @@ module Ltk
     property blue : Float64
     property alpha : Float64
 
-    def initialize(@offset, @red, @green, @blue, @alpha = 1.0_f64)
+    def initialize(@offset : Float64, @red : Float64, @green : Float64, @blue : Float64, @alpha : Float64 = 1.0_f64)
     end
 
-    def initialize(@offset, color : Color)
+    def initialize(@offset : Float64, color : Color)
       mul = 1.0_f64 / 255.0_f64
       @red = color.red * mul
       @green = color.green * mul
@@ -20,18 +20,18 @@ module Ltk
     end
   end
 
-  class Gradient
+  abstract struct Gradient
     getter stops : Array(GradientStop)
 
     def initialize
       @stops = Array(GradientStop).new
     end
 
-    def add_color_stop(offset, red, green, blue, alpha = 1.0_f64)
+    def add_color_stop(offset : Float64, red : Float64, green : Float64, blue : Float64, alpha : Float64 = 1.0_f64)
       @stops << GradientStop.new offset, red, green, blue, alpha
     end
 
-    def add_color_stop(offset, color)
+    def add_color_stop(offset : Float64, color : Color)
       @stops << GradientStop.new offset, color
     end
   end

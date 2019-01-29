@@ -95,7 +95,7 @@ module Ltk
 
     protected def paint_event
       p = Painter.new self
-      p.draw_line_edit self
+      style.draw_line_edit p, self
     end
 
     protected def recalc_cursor
@@ -110,8 +110,6 @@ module Ltk
       text_extents = p.text_extents text_left
       @cursor_rect = Rect.new((5.5_f64 + text_extents.width + @text_translate.x).round.to_i, 5, 1, h - 10)
 
-      #puts "recalc_cursor w=#{w} cp=#{@cursor_position}"
-      #puts "left=#{text_left} w=#{text_extents.width}"
       if @cursor_rect.x > right_bound
         @text_translate.x = right_bound - text_extents.width.round.to_i - 5
         @cursor_rect.x = right_bound
@@ -127,8 +125,6 @@ module Ltk
           @cursor_rect.width = 1
         end
       end
-      #puts "new cursor x=#{@cursor_rect.x}"
-      #puts "text_translate.x = #{@text_translate.x}"
     end
 
     private def move_cursor_home
