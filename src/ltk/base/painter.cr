@@ -8,12 +8,12 @@ module Ltk
   include Cairo
 
   struct Painter
+    getter brush : Brush = Color::WHITE.as(Brush)
     getter font_extents : Cairo::FontExtents
+    getter pen : Pen = Pen.new
     private getter space_width : Float64
 
     def initialize(widget : Widget)
-      @brush = Color::WHITE
-
       @surface = Cairo::XlibSurface.new(
         widget.display, widget.window,
         widget.display.default_visual(widget.screen.screen_number),
@@ -30,6 +30,8 @@ module Ltk
       @font_extents = @ctx.font_extents
 
       @space_width = @ctx.text_extents("a a").width - @ctx.text_extents("aa").width
+
+      apply_pen(@pen)
     end
 
     # def finalize
@@ -38,6 +40,15 @@ module Ltk
       #
       # Cairo.pattern_destroy @pattern unless @pattern == nil
     # end
+
+    def draw_line(x0 : Int32, y0 : Int32, x1 : Int32, y1 : Int32)
+      # puts "draw line r=#{@pen.color.red} w=#{@pen.width}"
+      # puts "ctx.line_width = #{@ctx.line_width}"
+
+      @ctx.move_to(x0.to_f, y0.to_f)
+      @ctx.line_to(x1.to_f, y1.to_f)
+      @ctx.stroke
+    end
 
     def draw_round_rect(x : Int32, y : Int32, w : Int32, h : Int32, r : Int32)
       # if r > (h / 2)
@@ -78,6 +89,15 @@ module Ltk
       @ctx.fill
     end
 
+    def pen=(@pen : Pen)
+      apply_pen(@pen)
+    end
+
+    def pen=(color : Color)
+      @pen = Pen.new(color)
+      apply_pen(@pen)
+    end
+
     private def apply_brush
       # unless @pattern.is_a? Nil
       #   Cairo.pattern_destroy @pattern
@@ -104,6 +124,13 @@ module Ltk
       #   Cairo.set_source @ctx, @pattern
       # else
       # end
+    end
+
+    private def apply_pen(pen : Pen)
+      color = pen.color
+      mul = 1.0_f64 / 255.0_f64
+      @ctx.set_source_rgba(color.red * mul, color.green * mul, color.blue * mul, color.alpha * mul)
+      @ctx.line_width = pen.width
     end
 
     def text_extents(text : String, trailing_ws : Bool = true) : Cairo::TextExtents
