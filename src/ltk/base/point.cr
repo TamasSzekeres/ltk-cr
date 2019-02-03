@@ -3,7 +3,8 @@ module Ltk
     property x : Int32
     property y : Int32
 
-    ZERO = Point.new(0, 0)
+    ZERO = Point.new(Int32.zero, Int32.zero)
+    MAX = Point.new(Int32::MAX, Int32::MAX)
 
     def initialize(@x = Int32.zero, @y = Int32.zero)
     end
@@ -14,7 +15,7 @@ module Ltk
     end
 
     @[AlwaysInline]
-    def is_null?
+    def is_null? : Bool
       @x == Int32.zero && @y == Int32.zero
     end
 
@@ -48,6 +49,9 @@ module Ltk
     property x : Float64
     property y : Float64
 
+    ZERO = PointF.new(0.0, 0.0)
+    MAX = PointF.new(Float64::MAX, Float64::MAX)
+
     def initialize(@x = Float64.zero, @y = Float64.zero)
     end
 
@@ -62,7 +66,7 @@ module Ltk
     end
 
     @[AlwaysInline]
-    def is_null?
+    def is_null? : Bool
       @x == Float64.zero && @y == Float64.zero
     end
 
