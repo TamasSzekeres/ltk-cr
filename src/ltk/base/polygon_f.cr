@@ -44,10 +44,24 @@ module Ltk
       RectF.new(min, max)
     end
 
-    def contains?(p : PointF) : Bool
+    def contains?(p : PointF, fill_rule = 0) : Bool
       return false if empty?
 
-      true
+      winding_number = 0
+
+      last_pt = unsafe_fetch(0)
+      last_start = unsafe_fetch(0)
+      (1...size).each do |i|
+        e = unsafe_fetch(i)
+        winding_number = PolygonF.isect_line(last_pt, e, p, winding_number)
+        last_pt = e
+      end
+  
+      if last_pt != last_start
+        winding_number = PolygonF.isect_line(last_pt, last_start, p, winding_number)
+      end
+  
+      (fill_rule == 1) ? (winding_number != 0) : ((winding_number % 2) != 0)
     end
 
     def closed? : Bool
