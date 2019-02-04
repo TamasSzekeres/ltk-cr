@@ -121,6 +121,22 @@ module Ltk
       ellipse(rect.x, rect.y, rect.width, rect.height)
     end
 
+    def point(x : Float64, y : Float64)
+      rectangle(x, y, 1.0, 1.0)
+    end
+
+    def point(x : Int32, y : Int32)
+      rectangle(x.to_f, y.to_f, 1.0, 1.0)
+    end
+
+    def point(p : PointF)
+      point(p.x, p.y)
+    end
+
+    def point(p : Point)
+      point(p.x.to_f, p.y.to_f)
+    end
+
     def polygon(points : Array(PointF))
       points.each_with_index do |p, i|
         if i == 0
