@@ -1,6 +1,8 @@
 require "x11"
 require "cairo"
 
+require "../enums/alignment"
+require "../enums/text_options"
 require "../widget/*"
 
 module Ltk
@@ -286,6 +288,63 @@ module Ltk
 
     def rounded_rectangle(rect : Rect, radius_x : Int32, radius_y : Int32)
       rounded_rectangle(rect.x.to_f, rect.y.to_f, rect.width.to_f, rect.height.to_f, radius_x.to_f, radius_y.to_f)
+    end
+
+    def text(x : Float64, y : Float64, text : String)
+      @ctx.move_to(x, y)
+      @ctx.show_text(text)
+    end
+
+    def text(pos : PointF, text : String)
+      @ctx.move_to(pos.x, pos.y)
+      @ctx.show_text(text)
+    end
+
+    def text(x : Int32, y : Int32, text : String)
+      @ctx.move_to(x.to_f, pos.y.to_f)
+      @ctx.show_text(text)
+    end
+
+    def text(pos : Point, text : String)
+      @ctx.move_to(pos.x.to_f, pos.y.to_f)
+      @ctx.show_text(text)
+    end
+
+    def text(rect : RectF, text : String, align : Alignment = Alignment::TopLeft,
+      text_options : TextOptions = TextOptions::Multiline, bounding : RectF? = nil)
+
+      lines = text_options.multiline? ? text.split("\n") : [text.delete("\n")]
+      extents = lines.map { |line| text_extents(line, text_options.include_trailing_spaces?)}
+      num_lines = lines.size
+      width = extents.map(&.width).max
+      height = num_lines * @font_extents.height
+      x = rect.x + case align
+      when .right? then rect.width - width
+      when .h_center? then (rect.width - width) / 2.0
+      else
+        0.0
+      end
+      y = rect.y + case align
+      when .v_center? then (rect.height - height) / 2.0
+      when .bottom? then rect.height - height
+      else
+        0.0
+      end
+
+      unless bounding.is_a? Nil
+      end
+
+      rectangle(x, y, width, height)
+
+      lines.each_with_index do |line, i|
+        text_line(x, y + i * @font_extents.height, line, extents[i], align, text_options)
+      end
+    end
+
+    protected def text_line(x : Float64, y : Float64, line : String,
+      extents : Cairo::TextExtents, align : Alignment, text_options : TextOptions)
+      @ctx.move_to(x, y + @font_extents.ascent)
+      @ctx.show_text(line)
     end
 
     def path
