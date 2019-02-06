@@ -5,8 +5,6 @@ module Ltk
     Justify
     IncludeTrailingSpaces
 
-    def single_line? : Bool
-      !multiline?
-    end
+    Singleline = None
   end
 end
