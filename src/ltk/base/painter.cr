@@ -10,8 +10,10 @@ module Ltk
   include Cairo
 
   struct Painter
+    getter font : Font
     getter font_extents : Cairo::FontExtents
-    private getter space_width : Float64
+
+    @space_width : Float64
 
     def initialize(widget : Widget)
       @surface = Cairo::XlibSurface.new(
@@ -21,11 +23,7 @@ module Ltk
       )
       @ctx = Cairo::Context.new @surface
 
-      @ctx.select_font_face("Sans",
-        Cairo::FontSlant::Normal,
-        Cairo::FontWeight::Normal)
-      @ctx.font_size = 12.0_f64
-
+      apply_font(@font = widget.style.default_font)
       @font_extents = @ctx.font_extents
 
       @space_width = @ctx.text_extents("a a").width - @ctx.text_extents("aa").width
@@ -36,6 +34,12 @@ module Ltk
       @ctx.set_source_rgb 1.0, 1.0, 1.0
       @ctx.paint
       @ctx.restore
+    end
+
+    def clip
+      @ctx.clip
+      yield self
+      @ctx.reset_clip
     end
 
     def draw(pen : Pen)
@@ -63,7 +67,7 @@ module Ltk
           yield self
           @ctx.fill
         when LinearGradient
-          lg = @brush.as LinearGradient
+          lg = brush.as LinearGradient
           s = lg.start
           e = lg.end
           pattern = Pattern.create_linear(s.x, s.y, e.x, e.y)
@@ -311,40 +315,62 @@ module Ltk
     end
 
     def text(rect : RectF, text : String, align : Alignment = Alignment::TopLeft,
-      text_options : TextOptions = TextOptions::Multiline, bounding : RectF? = nil)
-
-      lines = text_options.multiline? ? text.split("\n") : [text.delete("\n")]
-      extents = lines.map { |line| text_extents(line, text_options.include_trailing_spaces?)}
+      text_options : TextOptions = TextOptions::Multiline)
+      lines = text_options.multiline? ? text.split('\n') : [text.gsub('\n', ' ')]
+      extents = lines.map { |line| text_extents(line, text_options.include_trailing_spaces?) }
       num_lines = lines.size
-      width = extents.map(&.width).max
       height = num_lines * @font_extents.height
-      x = rect.x + case align
-      when .right? then rect.width - width
-      when .h_center? then (rect.width - width) / 2.0
-      else
-        0.0
-      end
       y = rect.y + case align
-      when .v_center? then (rect.height - height) / 2.0
       when .bottom? then rect.height - height
+      when .v_center? then (rect.height - height) / 2.0
       else
         0.0
       end
-
-      unless bounding.is_a? Nil
-      end
-
-      rectangle(x, y, width, height)
 
       lines.each_with_index do |line, i|
-        text_line(x, y + i * @font_extents.height, line, extents[i], align, text_options)
+        line_rect = rect
+        line_rect.y = y + i * @font_extents.height
+        text_line(line_rect, line, extents[i], align, text_options, i == (lines.size - 1))
       end
     end
 
-    protected def text_line(x : Float64, y : Float64, line : String,
-      extents : Cairo::TextExtents, align : Alignment, text_options : TextOptions)
-      @ctx.move_to(x, y + @font_extents.ascent)
-      @ctx.show_text(line)
+    private def text_line(rect : RectF, line : String,
+      extents : Cairo::TextExtents, align : Alignment, text_options : TextOptions,
+      last_line : Bool = false)
+      y = rect.y + @font_extents.ascent
+      if text_options.justify?
+        if last_line
+          @ctx.move_to(rect.x, y)
+          @ctx.show_text(line)
+        else
+          words = line.split(' ')
+          word_widths = words.map { |word| text_extents(word, false).width }
+          width = word_widths.sum
+          space_available = rect.width - width
+          if space_available <= 0.0
+            @ctx.move_to(rect.x, y)
+            @ctx.show_text(line)
+          else
+            space_between = space_available / (words.size - 1).to_f
+            x = rect.x
+            words.each_with_index do |word, i|
+              @ctx.move_to(x, y)
+              @ctx.show_text(word)
+              x += word_widths[i] + space_between
+            end
+          end
+        end
+      else
+        x = rect.x + case align
+        when .right? then rect.width - extents.width
+        when .h_center? then (rect.width - extents.width) / 2
+        else
+          0.0
+        end
+
+        @ctx.move_to(x, y)
+        @ctx.show_text(line)
+      end
     end
 
     def path
@@ -406,6 +432,18 @@ module Ltk
         end
       end
       @ctx.text_extents text
+    end
+
+    def font=(@font : Font)
+      apply_font(font)
+    end
+    
+    private def apply_font(font : Font)
+      @ctx.select_font_face(
+        @font.family,
+        @font.slant,
+        @font.weight)
+      @ctx.font_size = @font.size
     end
 
     def cairo_context : Cairo::Context
