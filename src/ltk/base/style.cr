@@ -1,5 +1,14 @@
+require "../enums/font_slant"
+require "../enums/font_weight"
+
 class Ltk::Style
-  def initialize()
+  DEFAULT_FONT = Font.new("Sans", 12.0_f64, FontSlant::Normal, FontWeight::Normal)
+
+  def initialize
+  end
+
+  def default_font : Font
+    DEFAULT_FONT
   end
 
   def draw_label(p : Painter, label : Label)
@@ -157,10 +166,7 @@ class Ltk::Style
     # Draw Text
     text = button.text
 
-    ctx.select_font_face("Sans",
-      Cairo::FontSlant::Normal,
-      Cairo::FontWeight::Normal)
-    ctx.font_size = 12.0_f64
+    p.font = button.font
 
     extents = ctx.text_extents text
     x = (button.width / 2.0_f64) - (extents.width / 2 + extents.x_bearing)

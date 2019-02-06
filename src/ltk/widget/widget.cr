@@ -1,5 +1,6 @@
 require "x11"
 
+require "../base/font"
 require "../base/margins"
 require "../base/rect"
 require "../base/size_policies"
@@ -25,6 +26,7 @@ module Ltk
     getter screen : Screen
     getter window : X11::C::Window
     property cursor : X11::C::Cursor = 2
+    getter font : Font = Font.new
     getter children : Array(Widget)
 
     property on_click : ClickEvent?
@@ -46,6 +48,8 @@ module Ltk
       end
       @screen = @display.default_screen
       create_window
+
+      @font = style.default_font
     end
 
     def finalize
@@ -336,6 +340,10 @@ module Ltk
 
     def layout=(layout : Layout?)
       @layout = layout
+    end
+
+    def font=(@font : Font)
+      repaint
     end
 
     def style : Style
