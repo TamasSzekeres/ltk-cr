@@ -11,6 +11,9 @@ class Ltk::Style
     DEFAULT_FONT
   end
 
+  def draw_checkbox(p : Painter, checkbox : CheckBox)
+  end
+
   def draw_label(p : Painter, label : Label)
     w = label.width
     h = label.height
