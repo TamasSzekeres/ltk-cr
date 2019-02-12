@@ -1,3 +1,4 @@
+require "../enums/alignment"
 require "./point"
 require "./size"
 
@@ -30,6 +31,31 @@ module Ltk
       @y1 = top_left.y
       @x2 = top_left.x + size.width - 1
       @y2 = top_left.y + size.height - 1
+    end
+
+    def self.aligned(bounding : Rect, width : Int32, height : Int32, alignment : Alignment = Alignment::TopLeft) : self
+      if width > bounding.width
+        raise "Width too big, can't fit into bounding rect!"
+      end
+      if height > bounding.height
+        raise "Height too big, can't fit into bounding rect!"
+      end
+
+      x = case alignment
+      when .right? then bounding.right - width + 1
+      when .h_center? then bounding.left + (bounding.width - width) / 2
+      else
+        bounding.left
+      end
+
+      y = case alignment
+      when .v_center? then bounding.top + (bounding.height - height) / 2
+      when .bottom? then bounding.bottom - height + 1
+      else
+        bounding.top
+      end
+
+      Rect.new(x, y, width, height)
     end
 
     @[AlwaysInline]
