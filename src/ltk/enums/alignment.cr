@@ -1,8 +1,6 @@
 module Ltk
   @[Flags]
   enum Alignment : UInt32
-    None   = 0
-
     # Horizontal flags
     Left    = 0x0001_u32
     Right   = 0x0002_u32
@@ -13,14 +11,24 @@ module Ltk
     Bottom  = 0x0040_u32
     VCenter = 0x0080_u32
 
-    TopLeft     = Top | Left
-    BottomLeft  = Bottom | Left
-    TopRight    = Top | Right
-    BottomRight = Bottom | Right
-    Center      = VCenter | HCenter
-    Leading     = Left
-    Trailing    = Right
+    # Combined flags
+    TopLeft      = Top | Left
+    TopCenter    = Top | HCenter
+    TopRight     = Top | Right
+    CenterLeft   = Left | VCenter
+    CenterRight  = Right | VCenter
+    BottomLeft   = Bottom | Left
+    BottomCenter = Bottom | HCenter
+    BottomRight  = Bottom | Right
+    Center       = VCenter | HCenter
 
+    # Aliases
+    Leading      = Left
+    Trailing     = Right
+    LeftCenter   = CenterLeft
+    RightCenter  = CenterRight
+
+    # Masks
     HMask   = Left | Right | HCenter
     VMask   = Top | Bottom | VCenter
   end
