@@ -1,13 +1,11 @@
-require "../enum/check_state"
+require "../enums/check_state"
 require "./widget"
 
 module Ltk
   class CheckBox < Widget
     getter text : String
     getter state : CheckState = CheckState::Unchecked
-    property tri_state : Bool = false
-
-    getter? hover : Bool = false
+    getter tristate : Bool = false
     getter? down : Bool = false
 
     delegate unchecked?, partially_checked?, checked?, to: @state
@@ -22,18 +20,8 @@ module Ltk
     end
 
     protected def click_event
+      @state = @state.next(@tristate)
       super
-    end
-
-    protected def enter_event
-      super
-      @hover = true
-      repaint
-    end
-
-    protected def leave_event
-      super
-      @hover = false
       repaint
     end
 
@@ -86,6 +74,13 @@ module Ltk
       end
     end
 
+    def tristate=(tristate : Bool)
+      if @tristate == tristate
+        @tristate = tristate
+        uncheck! if !tristate && (state == CheckState::PartiallyChecked)
+      end
+    end
+
     def uncheck!
       if @state != CheckState::Unchecked
         @state = CheckState::Unchecked
@@ -94,6 +89,8 @@ module Ltk
     end
 
     def check_partially!
+      raise "CheckBox must be in `tristate` mode!" unless tristate
+
       if @state != CheckState::PartiallyChecked
         @state = CheckState::PartiallyChecked
         repaint

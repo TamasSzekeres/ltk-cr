@@ -16,6 +16,7 @@ module Ltk
     @space_width : Float64
 
     def initialize(widget : Widget)
+      @widget = widget
       @surface = Cairo::XlibSurface.new(
         widget.display, widget.window,
         widget.display.default_visual(widget.screen.screen_number),
@@ -29,11 +30,16 @@ module Ltk
       @space_width = @ctx.text_extents("a a").width - @ctx.text_extents("aa").width
     end
 
-    def clear
+    def clear(color : Color)
+      mul = 1.0_f64 / 255.0_f64
       @ctx.save
-      @ctx.set_source_rgb 1.0, 1.0, 1.0
+      @ctx.set_source_rgba(color.red * mul, color.green * mul, color.blue * mul, color.alpha * mul)
       @ctx.paint
       @ctx.restore
+    end
+
+    def clear
+      clear(@widget.palette.window)
     end
 
     def clip
@@ -49,6 +55,8 @@ module Ltk
         mul = 1.0_f64 / 255.0_f64
         @ctx.set_source_rgba(color.red * mul, color.green * mul, color.blue * mul, color.alpha * mul)
         @ctx.line_width = pen.width
+        @ctx.line_cap = pen.line_cap
+        @ctx.line_join = pen.line_join
         yield self
         @ctx.stroke
       ensure
@@ -166,7 +174,7 @@ module Ltk
       @ctx.move_to(p1.x, p1.y)
       @ctx.line_to(p2.x, p2.y)
     end
-    
+
     def line(x0 : Int32, y0 : Int32, x1 : Int32, y1 : Int32)
       @ctx.move_to(x0.to_f, y0.to_f)
       @ctx.line_to(x1.to_f, y1.to_f)
@@ -437,7 +445,7 @@ module Ltk
     def font=(@font : Font)
       apply_font(font)
     end
-    
+
     private def apply_font(font : Font)
       @ctx.select_font_face(
         @font.family,

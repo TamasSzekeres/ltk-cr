@@ -432,6 +432,10 @@ module Ltk
 
     def intersects?(r : Rect)
     end
+
+    def to_f : RectF
+      RectF.new(self)
+    end
   end
 
   struct RectF
@@ -467,10 +471,10 @@ module Ltk
     end
 
     def initialize(rect : Rect)
-      @x = rect.x
-      @y = rect.y
-      @width = rect.width
-      @height = rect.height
+      @x = rect.x.to_f
+      @y = rect.y.to_f
+      @width = rect.width.to_f
+      @height = rect.height.to_f
     end
 
     @[AlwaysInline]
