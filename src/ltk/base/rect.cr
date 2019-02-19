@@ -360,6 +360,14 @@ module Ltk
       r
     end
 
+    def shrink!(d : Int32 = 1) : self
+      @x1 += d
+      @y1 += d
+      @x2 -= d
+      @y2 -= d
+      self
+    end
+
     def contains?(x, y, proper = false)
       r = self.normalized
       unless proper
@@ -717,6 +725,14 @@ module Ltk
     def size=(s)
       @width = s.width
       @height = s.height
+    end
+
+    def shrink!(d : Float64 = 1.0_f64) : self
+      @x1 += d
+      @y1 += d
+      @x2 -= d
+      @y2 -= d
+      self
     end
 
     def contains?(x, y)

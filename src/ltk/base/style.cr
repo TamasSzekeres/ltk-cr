@@ -15,8 +15,8 @@ class Ltk::Style
     DEFAULT_FONT
   end
 
-  def checker_rect(p : Painter, checkbox : CheckBox) : Rect
-    Rect.aligned(Rect.new(0, 0, checkbox.width, checkbox.height), 15, 15, Alignment::LeftCenter)
+  def checker_rect(p : Painter, widget : Widget) : Rect
+    Rect.aligned(Rect.new(0, 0, widget.width, widget.height), 15, 15, Alignment::LeftCenter)
   end
 
   def draw_editor_frame(p : Painter, rect : Rect, focused : Bool = false, down : Bool = false)
@@ -250,5 +250,33 @@ class Ltk::Style
 
     ctx.set_source_rgb 0.85_f64, 0.85_f64, 0.85_f64
     ctx.show_text text
+  end
+
+  def draw_radio_button(p : Painter, radio_button : RadioButton)
+    p.clear
+    rect = checker_rect(p, radio_button)
+    center = rect.center
+    radius = Math.min(rect.width, rect.height) / 2
+
+    border_color = radio_button.focused? ? Color.new(83_u8, 160_u8, 237_u8) : Color.new(48, 48, 48)
+    p.fill(border_color) do
+      p.circle(center, radius)
+    end
+
+    bg_color = radio_button.down? ? Color.new(73, 73, 73) : Color.new(56, 56, 56)
+    p.fill(bg_color) do
+      p.circle(center, radius - 1)
+    end
+
+    if radio_button.checked?
+      p.fill(radio_button.palette.text) do
+        p.circle(center, radius - 4)
+      end
+    end
+
+    text_rect = RectF.new(20.0, 0.0, radio_button.width - 20.0, radio_button.height.to_f)
+    p.fill(radio_button.palette.text) do
+      p.text(text_rect, radio_button.text, Alignment::LeftCenter)
+    end
   end
 end

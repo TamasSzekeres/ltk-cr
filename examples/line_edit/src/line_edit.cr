@@ -28,6 +28,14 @@ module LineEdit
       checkbox.object_name = "checkox"
       checkbox.geometry = Rect.new 20, 106, 150, 23
 
+      radio_btn1 = RadioButton.new "One", main_win
+      radio_btn1.object_name = "radio_btn1"
+      radio_btn1.geometry = Rect.new 20, 139, 150, 23
+
+      radio_btn2 = RadioButton.new "Two", main_win
+      radio_btn2.object_name = "radio_btn2"
+      radio_btn2.geometry = Rect.new 20, 162, 150, 23
+
       # Runs the application.
       Application.run ARGV
     end
